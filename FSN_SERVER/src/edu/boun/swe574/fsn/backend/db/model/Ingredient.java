@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity
+@Entity(name = "Ingredient")
+@Table(name = "Ingredient")
 public class Ingredient extends BaseModel {
 
 	private static final long serialVersionUID = 635123582500250571L;

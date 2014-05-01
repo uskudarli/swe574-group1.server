@@ -7,9 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
-@Entity
+@Entity(name = "Recipe")
+@Table(name = "Recipe")
 public class Recipe extends BaseModel {
 
 	private static final long serialVersionUID = 9012412931235002571L;
@@ -21,6 +25,7 @@ public class Recipe extends BaseModel {
 	private String directions;
 	
 	@Column(name="DATE")
+	@Temporal(TemporalType.DATE)
 	private Date date;
 	
 	@Column(name="VERSION_NOTE", length=200)

@@ -3,9 +3,13 @@ package edu.boun.swe574.fsn.backend.db.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+@Entity(name = "User")
+@Table(name = "User")
 public class User extends BaseModel {
 	
 	private static final long serialVersionUID = 7112342412500250571L;

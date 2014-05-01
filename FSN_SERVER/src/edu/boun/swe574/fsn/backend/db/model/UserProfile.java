@@ -7,8 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-@Entity
+@Entity(name = "UserProfile")
+@Table(name = "UserProfile")
 public class UserProfile extends BaseModel{
 	
 	private static final long serialVersionUID = 6123123500250571L;
@@ -17,6 +21,7 @@ public class UserProfile extends BaseModel{
 	private String location;
 	
 	@Column(name="DATE_OF_BIRTH")
+	@Temporal(TemporalType.DATE)
 	private Date dateOfBirth;
 	
 	@Column(name="PROFILE_MESSAGE", length=150)

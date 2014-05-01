@@ -7,16 +7,22 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-@Entity
+@Entity(name = "AccessToken")
+@Table(name = "AccessToken")
 public class AccessToken extends BaseModel {
 
 	private static final long serialVersionUID = 58917120000571L;
 	
 	@Column(name="CREATED_AT")
+	@Temporal(TemporalType.DATE)
 	private Date createdAt;
 	
 	@Column(name="EXPIRES_AT")
+	@Temporal(TemporalType.DATE)
 	private Date expiresAt;
 	
 	@ManyToOne(fetch=FetchType.LAZY)

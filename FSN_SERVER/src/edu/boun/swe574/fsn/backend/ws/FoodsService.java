@@ -7,48 +7,55 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 
-import edu.boun.swe574.fsn.backend.db.model.Recipe;
+import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
+import edu.boun.swe574.fsn.backend.ws.response.GetIngredientsResponse;
+import edu.boun.swe574.fsn.backend.ws.response.GetRecipeResponse;
+import edu.boun.swe574.fsn.backend.ws.response.GetRevisionHistoryOfRecipeResponse;
+import edu.boun.swe574.fsn.backend.ws.response.info.RecipeInfo;
 
-@WebService(name="AuthService", serviceName="AuthService")
+@WebService(name="FoodsService", serviceName="FoodsService")
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
 public class FoodsService {
 
 	@WebMethod
-	public int createRecipe(	@WebParam(name="token")		String token, 
-								@WebParam(name="recipe")	Object recipe){
-		return 0;
+	public BaseServiceResponse createRecipe(	@WebParam(name="token")		String token, 
+								@WebParam(name="recipe")	RecipeInfo recipe){
+		return new BaseServiceResponse();
 	}
 	
 	@WebMethod
-	public int getIngredients(	@WebParam(name="token")			String token, 
+	public GetIngredientsResponse getIngredients(	@WebParam(name="token")			String token, 
 								@WebParam(name="queryString")	String queryString){
-		return 0;
+		return new GetIngredientsResponse();
 	}
 	
 	@WebMethod
-	public int createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
-											@WebParam(name="recipe")			Recipe recipe, 
+	public BaseServiceResponse createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
+											@WebParam(name="recipe")			RecipeInfo recipe, 
 											@WebParam(name="parentRecipeId")	long parentRecipeId,  
 											@WebParam(name="revisionNote")		String revisionNote){
-		return 0;
+		return new BaseServiceResponse();
 	}
 	
 	@WebMethod
-	public int getRecipe(	@WebParam(name="token")		String token, 
+	public GetRecipeResponse getRecipe(	@WebParam(name="token")		String token, 
 							@WebParam(name="recipeId")	long recipeId){
-		return 0;
+		
+		return new GetRecipeResponse();
 	}
 	
 	@WebMethod
-	public int rateRecipe(	@WebParam(name="token")		String token, 
+	public BaseServiceResponse rateRecipe(	@WebParam(name="token")		String token, 
 							@WebParam(name="recipeId")	long recipeId, 
 							@WebParam(name="rateValue")	Integer rateValue){
-		return 0;
+		
+		return new BaseServiceResponse();
 	}
 	
 	@WebMethod
-	public int getRevisionHistoryOfRecipe(	@WebParam(name="token")		String token, 
+	public GetRevisionHistoryOfRecipeResponse getRevisionHistoryOfRecipe(	@WebParam(name="token")		String token, 
 											@WebParam(name="recipeId")	long recipeId){
-		return 0;
+		
+		return new GetRevisionHistoryOfRecipeResponse();
 	}
 }

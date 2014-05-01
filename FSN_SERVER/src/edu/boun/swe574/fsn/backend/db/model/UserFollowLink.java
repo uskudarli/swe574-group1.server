@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity
+@Entity(name = "UserFollowLink")
+@Table(name = "UserFollowLink")
 public class UserFollowLink extends BaseModel {
 
 	private static final long serialVersionUID = 58962184200250571L;
