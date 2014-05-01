@@ -1,0 +1,10 @@
+package edu.boun.swe574.fsn.backend.db.model;
+
+public class Ingredient extends BaseModel {
+
+	private static final long serialVersionUID = 635123582500250571L;
+	
+	@Column(name="AMOUNT")
+	private double amount;
+	
+}

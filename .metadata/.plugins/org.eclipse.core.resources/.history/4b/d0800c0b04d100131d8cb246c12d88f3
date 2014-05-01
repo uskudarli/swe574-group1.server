@@ -1,0 +1,19 @@
+package edu.boun.swe574.fsn.backend.ws;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
+@WebService(name="AuthService", serviceName="AuthService")
+public class AuthService {
+	
+	@WebMethod
+	public int register(@WebParam(name="email") 	String email,
+						@WebParam(name="name") 		String name,
+						@WebParam(name="surname") 	String surname,
+						@WebParam(name="password")	String password){
+		
+		return 0;
+	}
+	
+}

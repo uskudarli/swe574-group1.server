@@ -1,0 +1,27 @@
+package edu.boun.swe574.fsn.backend.ws;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
+@WebService(name="AuthService", serviceName="AuthService")
+@SOAPBinding(style = Style.DOCUMENT, use=Use.LITERAL)
+public class AuthService {
+	
+	/**
+	 * @param email
+	 * @param name
+	 * @param surname
+	 * @param password
+	 * @return
+	 */
+	@WebMethod
+	public int register(@WebParam(name="email") 	String email,
+						@WebParam(name="name") 		String name,
+						@WebParam(name="surname") 	String surname,
+						@WebParam(name="password")	String password){
+		
+		return 0;
+	}
+	
+}

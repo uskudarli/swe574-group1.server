@@ -1,0 +1,6 @@
+package edu.boun.swe574.fsn.backend.db.model;
+
+public class User extends BaseModel {
+	
+
+}

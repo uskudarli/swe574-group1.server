@@ -1,0 +1,5 @@
+package edu.boun.swe574.fsn.backend.ws;
+
+public class FoodsService {
+
+}

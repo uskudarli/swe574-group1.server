@@ -1,0 +1,21 @@
+package edu.boun.swe574.fsn.backend.db.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
+public class UserProfile extends BaseModel{
+	
+	private static final long serialVersionUID = 6123123500250571L;
+	
+	@Column(name="LOCATION", length=150)
+	private String location;
+	
+	@Column(name="DATE_OF_BIRTH")
+	private Date dateOfBirth;
+	
+	
+}

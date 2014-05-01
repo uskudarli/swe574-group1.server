@@ -1,0 +1,8 @@
+package edu.boun.swe574.fsn.backend.ws.util;
+
+
+public class BaseServiceResponse {
+	private int ResponseCode;
+	private 
+}
+
