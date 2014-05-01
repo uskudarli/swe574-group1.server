@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
   <endpoint
-     name="fsnws"
+     name="fsnws_auth"
      implementation="edu.boun.swe574.fsn.backend.ws.AuthService"
-     url-pattern="/fsnws"/>
+     url-pattern="/fsnws_auth"/>
+  <endpoint
+     name="fsnws_food"
+     implementation="edu.boun.swe574.fsn.backend.ws.FoodsService"
+     url-pattern="/fsnws_food"/>
+     
+  <endpoint
+     name="fsnws_network"
+     implementation="edu.boun.swe574.fsn.backend.ws.NetworkService"
+     url-pattern="/fsnws_network"/>
+     
+  <endpoint
+     name="fsnws_search"
+     implementation="edu.boun.swe574.fsn.backend.ws.SearchService"
+     url-pattern="/fsnws_search"/>
 </endpoints> 

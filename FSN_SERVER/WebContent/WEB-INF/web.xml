@@ -14,14 +14,52 @@
         com.sun.xml.ws.transport.http.servlet.WSServletContextListener
      </listener-class>
    </listener>
+   
    <servlet>
-      <servlet-name>fsnws</servlet-name>
+      <servlet-name>fsnws_auth</servlet-name>
       <servlet-class>
         com.sun.xml.ws.transport.http.servlet.WSServlet
       </servlet-class>
    </servlet>
+   
+    <servlet>
+      <servlet-name>fsnws_food</servlet-name>
+      <servlet-class>
+        com.sun.xml.ws.transport.http.servlet.WSServlet
+      </servlet-class>
+   </servlet>
+   
+    <servlet>
+      <servlet-name>fsnws_network</servlet-name>
+      <servlet-class>
+        com.sun.xml.ws.transport.http.servlet.WSServlet
+      </servlet-class>
+   </servlet>
+   
+    <servlet>
+      <servlet-name>fsnws_search</servlet-name>
+      <servlet-class>
+        com.sun.xml.ws.transport.http.servlet.WSServlet
+      </servlet-class>
+   </servlet>
+   
    <servlet-mapping>
-     <servlet-name>fsnws</servlet-name>
-     <url-pattern>/fsnws</url-pattern>
+     <servlet-name>fsnws_auth</servlet-name>
+     <url-pattern>/fsnws_auth</url-pattern>
+   </servlet-mapping>
+   
+   <servlet-mapping>
+     <servlet-name>fsnws_food</servlet-name>
+     <url-pattern>/fsnws_food</url-pattern>
+   </servlet-mapping>
+   
+   <servlet-mapping>
+     <servlet-name>fsnws_network</servlet-name>
+     <url-pattern>/fsnws_network</url-pattern>
+   </servlet-mapping>
+   
+   <servlet-mapping>
+     <servlet-name>fsnws_search</servlet-name>
+     <url-pattern>/fsnws_search</url-pattern>
    </servlet-mapping>
 </web-app>
