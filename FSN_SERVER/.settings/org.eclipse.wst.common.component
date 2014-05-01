@@ -3,6 +3,8 @@
     <wb-module deploy-name="FSN_SERVER">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/client"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
         <property name="context-root" value="FSN_SERVER"/>
         <property name="java-output-path" value="/FSN_SERVER/build/classes"/>
     </wb-module>
