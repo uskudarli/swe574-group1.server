@@ -1,0 +1,6 @@
+.metadata
+Server/
+FSN_SERVER/build/
+FSN_SERVER/.settings
+FSN_SERVER/.classpath
+*.DS_Store
