@@ -1,5 +1,0 @@
-package edu.boun.swe574.fsn.backend.db.model;
-
-public class UserFollowLink extends BaseModel {
-
-}
