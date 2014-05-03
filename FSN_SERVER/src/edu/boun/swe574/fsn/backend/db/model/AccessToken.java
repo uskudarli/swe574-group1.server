@@ -7,12 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity(name = "AccessToken")
 @Table(name = "AccessToken")
+@NamedQueries({
+    @NamedQuery(name = "AccessToken.getUserTokens", query = "SELECT at FROM AccessToken at WHERE at.user.id = :uid"),
+})
 public class AccessToken extends BaseModel {
 
 	private static final long serialVersionUID = 58917120000571L;

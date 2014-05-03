@@ -172,5 +172,23 @@ public class BaseDao {
             return null;
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public <DataModel> List<DataModel> executeNamedQueryGetList(String queryName, KeyValuePair<String, Object>... parameters) {
+        try {
+            Query q = em.createNamedQuery(queryName);
+            if (parameters != null) {
+                for (KeyValuePair<String, Object> entry : parameters) {
+                    if (entry != null) {
+                        q.setParameter(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            return (List<DataModel>) q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package edu.boun.swe574.fsn.backend.ws;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -100,6 +101,7 @@ public class AuthService {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@WebMethod
 	public LoginResponse login(	@WebParam(name="email") 		String email,
 					 			@WebParam(name="password")		String password){
@@ -127,6 +129,16 @@ public class AuthService {
 		try {
 			
 			//TODO: Upsert AccessToken / delete old token
+			
+			// get old tokens belonging to user
+			KeyValuePair<String, Object> atQueryParams = new KeyValuePair<String, Object>("uid", user.getId()); 
+			List<AccessToken> oldTokenList = baseDao.executeNamedQueryGetList("AccessToken.getUserTokens", atQueryParams);
+			
+			// delete old tokens
+			for (AccessToken oldToken : oldTokenList) {
+				baseDao.delete(oldToken);
+			}
+			
 			AccessToken token = new AccessToken();
 			token.setCreatedAt(new Date());
 			token.setUser(user);
