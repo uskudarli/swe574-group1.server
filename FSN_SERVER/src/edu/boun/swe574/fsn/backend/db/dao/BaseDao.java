@@ -9,6 +9,8 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
+import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
+
 public class BaseDao {
 
     public Logger           logger = Logger.getLogger(BaseDao.class);
@@ -152,6 +154,23 @@ public class BaseDao {
     public void rollbackIfTransactionActive() {
         if (em.getTransaction().isActive())
             em.getTransaction().rollback();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <DataModel> DataModel executeNamedQuery(String queryName, KeyValuePair<String, Object>... parameters) {
+        try {
+            Query q = em.createNamedQuery(queryName);
+            if (parameters != null) {
+                for (KeyValuePair<String, Object> entry : parameters) {
+                    if (entry != null) {
+                        q.setParameter(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            return (DataModel) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

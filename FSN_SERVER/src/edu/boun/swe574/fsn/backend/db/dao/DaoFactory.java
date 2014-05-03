@@ -11,8 +11,10 @@ public class DaoFactory {
 	private static final Logger logger = Logger.getLogger(DaoFactory.class);
 
 
-    private static final String                    PERSISTENCE_UNIT_NAME        = "FSN_PU";
-
+    private static final String                    	PERSISTENCE_UNIT_NAME        = "FSN_PU";
+    private static final String                    	PERSISTENCE_UNIT_PROD_NAME        = "FSN_PROD";
+    private static final boolean					IS_PROD 					= true;
+    
     private static EntityManagerFactory            emf                          = null;
     
     private EntityManager                          em;
@@ -69,7 +71,8 @@ public class DaoFactory {
 
         logger.warn("{***} Initializing Entity Manager Factory...");
 
-        emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+        
+        emf = Persistence.createEntityManagerFactory(IS_PROD ? PERSISTENCE_UNIT_PROD_NAME : PERSISTENCE_UNIT_NAME);
 
         isEMFInited = true;
     }

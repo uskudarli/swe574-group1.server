@@ -4,12 +4,17 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity(name = "User")
 @Table(name = "User")
+@NamedQueries({
+    @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+})
 public class User extends BaseModel {
 	
 	private static final long serialVersionUID = 7112342412500250571L;

@@ -28,6 +28,17 @@ public class AccessToken extends BaseModel {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="USER_ID", nullable=false)
 	private User user;
+	
+	@Column(name="MD5TOKEN", length=128)
+	private String md5Token;
+
+	public String getMd5Token() {
+		return md5Token;
+	}
+
+	public void setMd5Token(String md5Token) {
+		this.md5Token = md5Token;
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;

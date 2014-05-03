@@ -25,7 +25,32 @@
 				<property name="javax.persistence.jdbc.password" value=""/>
 				<!-- {none,create-tables,drop-and-create-tables} -->
 				<property name="eclipselink.ddl-generation" value="none"/>
+				<property name="eclipselink.ddl-generation.output-mode" value="database"/>
 		</properties>
 	</persistence-unit>
-		
+	<persistence-unit name="FSN_PROD" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+		<class>edu.boun.swe574.fsn.backend.db.model.AccessToken</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.Food</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.FoodBlacklist</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.Ingredient</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.Recipe</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.User</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.UserFollowLink</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.UserProfile</class>
+		<class>edu.boun.swe574.fsn.backend.db.model.UserRecipeRating</class>
+		<properties>
+				<property name="eclipselink.jdbc.charSet" value="UTF-8" />
+				<property name="eclipselink.cache.type.default" value="NONE" />
+				<property name="eclipselink.target-database" value="MySQL"/>
+				<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+				<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/spring2014g1"/>
+				<property name="javax.persistence.jdbc.user" value="spring2014g1"/>
+				<property name="javax.persistence.jdbc.password" value="sg1jl"/>
+				<!-- {none,create-tables,drop-and-create-tables} -->
+				<property name="eclipselink.ddl-generation" value="create-tables"/>
+				<property name="eclipselink.ddl-generation.output-mode" value="database"/>
+		</properties>
+	</persistence-unit>
 </persistence>

@@ -1,6 +1,5 @@
 package edu.boun.swe574.fsn.backend.ws;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.jws.WebMethod;
@@ -11,16 +10,18 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 import javax.persistence.RollbackException;
 
+import org.eclipse.persistence.exceptions.DatabaseException;
+
+import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
+import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
+import edu.boun.swe574.fsn.backend.db.model.AccessToken;
+import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.LoginResponse;
+import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
 import edu.boun.swe574.fsn.backend.ws.util.ResultCode;
 import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
 import edu.boun.swe574.fsn.backend.ws.util.StringUtil;
-import edu.boun.swe574.fsn.backend.db.model.*;
-import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
-import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
-
-import org.eclipse.persistence.exceptions.DatabaseException;
 
 @WebService(name="AuthService", serviceName="AuthService")
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
@@ -47,7 +48,6 @@ public class AuthService {
 		System.out.println(surname);
 		System.out.println(password);
 		
-		// TODO: Throwing NullPointerException for name, surname, password. WHY?
         // Check if mandatory params are missing
         // WARN: No validations on these fields!
 		if(!StringUtil.hasText(email) ||
@@ -62,7 +62,7 @@ public class AuthService {
 		}
 
         try {
-
+        		//TODO: Handle name and surname
                 User user = new User();
                 user.setCreatedAt(new Date());
                 user.setEmail(email);
@@ -104,12 +104,51 @@ public class AuthService {
 	
 	
 	@WebMethod
-	public LoginResponse login(@WebParam(name="email") 		String email,
-					 @WebParam(name="password")		String password){
+	public LoginResponse login(	@WebParam(name="email") 		String email,
+					 			@WebParam(name="password")		String password){
 		
 		LoginResponse response = new LoginResponse();
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		if(!StringUtil.hasText(email) || !StringUtil.hasText(password)){
+			response.setResultCode(ResultCode.FAILURE.getCode());
+			response.setErrorCode(ServiceErrorCode.MISSING_PARAM.getCode());
+			return response;
+		}
+		
+		// Get a user object for the e-mail
+		KeyValuePair<String, Object> queryParams = new KeyValuePair<String,Object>("email", email); 
+		User user = baseDao.executeNamedQuery("User.findByEmail", queryParams);
+		
+		// if no matching user or passwd doesn't match, fail
+		if(user == null || !user.getPasswordMd5().equals(password)){
+			response.setErrorCode(ServiceErrorCode.INVALID_EMAIL_PWD.getCode());
+			response.setResultCode(ResultCode.FAILURE.getCode());
+			return response;
+		}
+		
+		try {
+			
+			//TODO: Upsert AccessToken / delete old token
+			AccessToken token = new AccessToken();
+			token.setCreatedAt(new Date());
+			token.setUser(user);
+			String hash = StringUtil.toMD5(user.getEmail() + System.currentTimeMillis());
+			token.setMd5Token(hash);
+			// expiry date null: never expire
+			
+			baseDao.save(token);
+			
+			response.setToken(token.getMd5Token());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			response.setErrorCode(ServiceErrorCode.INTERNAL_SERVER_ERROR.getCode());
+			response.setResultCode(ResultCode.FAILURE.getCode());
+			return response;
+		}
+		
 		response.setResultCode(ResultCode.SUCCESS.getCode());
-		response.setToken(String.valueOf(Calendar.getInstance().getTimeInMillis()));
 		return response;
 	}
 	
