@@ -43,11 +43,6 @@ public class AuthService {
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		System.out.println(email);
-		System.out.println(name);
-		System.out.println(surname);
-		System.out.println(password);
-		
         // Check if mandatory params are missing
         // WARN: No validations on these fields!
 		if(!StringUtil.hasText(email) ||
@@ -67,7 +62,9 @@ public class AuthService {
                 user.setCreatedAt(new Date());
                 user.setEmail(email);
                 user.setPasswordMd5(password);
-
+                user.setName(name);
+                user.setSurname(surname);
+                
                 baseDao.save(user);
 
                 response.setResultCode(ResultCode.SUCCESS.getCode());

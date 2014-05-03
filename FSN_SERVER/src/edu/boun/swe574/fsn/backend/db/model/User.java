@@ -25,10 +25,34 @@ public class User extends BaseModel {
 	
 	@Column(name="EMAIL",length=45)
 	private String email;
+
+
+	@Column(name="NAME",length=45)
+	private String name;
+	
+	@Column(name="SURNAME",length=45)
+	private String surname;
 	
 	@Column(name="PASSWORD_MD5", length=128)
 	private String passwordMd5;
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	
 	public Date getCreatedAt() {
 		return createdAt;
 	}
