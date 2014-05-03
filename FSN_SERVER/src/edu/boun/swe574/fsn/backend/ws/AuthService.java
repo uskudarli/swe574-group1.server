@@ -15,6 +15,7 @@ import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.LoginResponse;
 import edu.boun.swe574.fsn.backend.ws.util.ResultCode;
 import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
+import edu.boun.swe574.fsn.backend.ws.util.StringUtil;
 import edu.boun.swe574.fsn.backend.db.model.*;
 import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
@@ -41,7 +42,6 @@ public class AuthService {
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		
 		System.out.println(email);
 		System.out.println(name);
 		System.out.println(surname);
@@ -50,16 +50,16 @@ public class AuthService {
 		// TODO: Throwing NullPointerException for name, surname, password. WHY?
         // Check if mandatory params are missing
         // WARN: No validations on these fields!
-//      if(email.isEmpty() 
-////                    || name.isEmpty() 
-//                      || surname.isEmpty() 
-//                      || password.isEmpty()){
-//              
-//              response.setErrorCode(ServiceErrorCode.MISSING_PARAM.getCode());
-//              response.setResultCode(ResultCode.FAILURE.getCode());
-//              
-//              return response;
-//      }
+		if(!StringUtil.hasText(email) ||
+				!StringUtil.hasText(name) ||
+				!StringUtil.hasText(password) ||
+				!StringUtil.hasText(surname) ){
+			  
+            response.setErrorCode(ServiceErrorCode.MISSING_PARAM.getCode());
+            response.setResultCode(ResultCode.FAILURE.getCode());
+            
+            return response;
+		}
 
         try {
 
