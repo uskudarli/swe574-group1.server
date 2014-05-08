@@ -128,8 +128,6 @@ public class AuthService {
 		
 		try {
 			
-			//TODO: Upsert AccessToken / delete old token
-			
 			// get old tokens belonging to user
 			KeyValuePair<String, Object> atQueryParams = new KeyValuePair<String, Object>("uid", user.getId()); 
 			List<AccessToken> oldTokenList = baseDao.executeNamedQueryGetList("AccessToken.getUserTokens", atQueryParams);
@@ -149,6 +147,8 @@ public class AuthService {
 			baseDao.save(token);
 			
 			response.setToken(token.getMd5Token());
+			response.setName(user.getName());
+			response.setSurname(user.getSurname());
 		}
 		catch(Exception e){
 			e.printStackTrace();
