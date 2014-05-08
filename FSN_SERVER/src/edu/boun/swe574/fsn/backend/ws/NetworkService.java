@@ -10,20 +10,45 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 
+import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
+import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
+import edu.boun.swe574.fsn.backend.db.model.User;
+import edu.boun.swe574.fsn.backend.db.model.UserProfile;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeFeedsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.SearchForUsersResponse;
 import edu.boun.swe574.fsn.backend.ws.response.info.UserInfo;
+import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
 
 @WebService(name="NetworkService", serviceName="NetworkService")
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
 public class NetworkService {
 
+	@SuppressWarnings("unchecked")
 	@WebMethod
 	public GetProfileResponse getProfileOfSelf(@WebParam(name="token") String token){
 		
-		return new GetProfileResponse();
+		GetProfileResponse response = new GetProfileResponse();
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		// TODO: Code review: passing response (out) variable to the authenticate method
+		// there may be a neater way of doing this?
+		User user = ServiceCommons.authenticate(token, response);
+		
+		if(user==null){
+			return response;
+		}
+		
+		KeyValuePair<String,Object> qParams = new KeyValuePair<String,Object>("uid", user.getId());
+		UserProfile up = baseDao.executeNamedQuery("UserProfile.getUserProfile", qParams);
+		
+		if(up != null){
+			response.mapUserProfile(up);
+		}
+		
+		response.succeed();
+		return response;
 	}
 	
 	@WebMethod

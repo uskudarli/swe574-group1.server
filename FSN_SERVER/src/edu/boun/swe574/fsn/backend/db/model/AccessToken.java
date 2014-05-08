@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 @Table(name = "AccessToken")
 @NamedQueries({
     @NamedQuery(name = "AccessToken.getUserTokens", query = "SELECT at FROM AccessToken at WHERE at.user.id = :uid"),
+    @NamedQuery(name = "AccessToken.getTokenByHash" , query = "SELECT at FROM AccessToken at WHERE at.md5Token = :token" )
 })
 public class AccessToken extends BaseModel {
 

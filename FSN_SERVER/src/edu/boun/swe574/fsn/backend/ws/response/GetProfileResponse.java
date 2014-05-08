@@ -3,6 +3,7 @@ package edu.boun.swe574.fsn.backend.ws.response;
 import java.util.Date;
 import java.util.List;
 
+import edu.boun.swe574.fsn.backend.db.model.UserProfile;
 import edu.boun.swe574.fsn.backend.ws.response.info.IngredientInfo;
 
 public class GetProfileResponse extends BaseServiceResponse {
@@ -42,6 +43,14 @@ public class GetProfileResponse extends BaseServiceResponse {
 	}
 	public void setIngredientBlackList(List<IngredientInfo> ingredientBlackList) {
 		this.ingredientBlackList = ingredientBlackList;
+	}
+	
+	public void mapUserProfile(UserProfile up){
+		this.dateOfBirth = up.getDateOfBirth();
+		this.location = up.getLocation();
+//		this.ingredientBlackList = 
+//		this.image = up.get
+		this.profileMessage = up.getProfileMessage();
 	}
 
 	

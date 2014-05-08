@@ -7,12 +7,18 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity(name = "UserProfile")
 @Table(name = "UserProfile")
+@NamedQueries({
+    @NamedQuery(name = "UserProfile.getUserProfile", query = "SELECT up FROM UserProfile up WHERE up.user.id = :uid")
+})
 public class UserProfile extends BaseModel{
 	
 	private static final long serialVersionUID = 6123123500250571L;
@@ -31,6 +37,9 @@ public class UserProfile extends BaseModel{
 	@JoinColumn(name = "USERID", nullable = false)
 	private User user;
 	
+	@ManyToOne(fetch= FetchType.LAZY)
+	@JoinColumn(name="FOODBLACKLISTID", nullable=true)
+	private FoodBlacklist blacklist;
 	
 //	Getters and setters
 	

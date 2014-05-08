@@ -149,7 +149,8 @@ public class AuthService {
 			response.setToken(token.getMd5Token());
 			response.setName(user.getName());
 			response.setSurname(user.getSurname());
-		}
+
+		} 
 		catch(Exception e){
 			e.printStackTrace();
 			response.setErrorCode(ServiceErrorCode.INTERNAL_SERVER_ERROR.getCode());
