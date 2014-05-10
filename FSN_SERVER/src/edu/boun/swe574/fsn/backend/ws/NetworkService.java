@@ -194,5 +194,41 @@ public class NetworkService {
 								@WebParam(name="pageSize")	Integer pageSize){
 		return new GetRecipeFeedsResponse();
 	}
+
+	@SuppressWarnings("unchecked")
+	@WebMethod
+	public BaseServiceResponse updatePhoto( @WebParam(name="token") String token,
+											@WebParam(name="image") byte[] image){
+		
+		BaseServiceResponse response = new BaseServiceResponse();
+		if (token == null || image == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		User user = ServiceCommons.authenticate(token, response);
+		if (user == null){
+			return response;
+		}
+		
+		try {
+			BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+			KeyValuePair<String, Object> qParams = new KeyValuePair<String, Object>("uid", user.getId()); 
+			UserProfile up = baseDao.executeNamedQuery("UserProfile.getUserProfile", qParams);
+			
+			up.setImage(image);
+			
+			baseDao.update(up);
+			
+			response.succeed();
+			return response;
+		}
+		catch(Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}		
+		
+	}
+	
 	
 }
