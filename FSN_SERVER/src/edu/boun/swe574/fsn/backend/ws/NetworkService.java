@@ -15,6 +15,7 @@ import javax.jws.soap.SOAPBinding.Use;
 
 import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
+import edu.boun.swe574.fsn.backend.db.model.Food;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
@@ -235,4 +236,8 @@ public class NetworkService {
 		return updatePhoto(token, null);
 	}
 	
+	public BaseServiceResponse updateIngredientBlacklist(	@WebParam(name="token") String token,
+															@WebParam(name="blacklist") List<Food> blacklist ){
+		return new BaseServiceResponse();
+	}
 }

@@ -6,6 +6,7 @@ public class UserInfo {
 	private String email;
 	private String name;
 	private String surname;
+	private String profileMessage;
 	
 	public long getUserId() {
 		return userId;
@@ -30,6 +31,12 @@ public class UserInfo {
 	}
 	public void setSurname(String surname) {
 		this.surname = surname;
+	}
+	public String getProfileMessage() {
+		return profileMessage;
+	}
+	public void setProfileMessage(String profileMessage) {
+		this.profileMessage = profileMessage;
 	}
 	
 	
