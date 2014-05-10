@@ -16,6 +16,7 @@ import javax.jws.soap.SOAPBinding.Use;
 import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
 import edu.boun.swe574.fsn.backend.db.model.User;
+import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;
@@ -55,6 +56,7 @@ public class NetworkService {
 		return response;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse editProfile(	@WebParam(name="token") 			String token, 
 											@WebParam(name="location") 			String location, 
@@ -121,10 +123,41 @@ public class NetworkService {
 		return new GetProfileResponse();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse follow(	@WebParam(name="token")		String token, 
-						@WebParam(name="email")		String email){
-		return new BaseServiceResponse();
+										@WebParam(name="email")		String email){
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		BaseServiceResponse response= new BaseServiceResponse();
+		
+		User user = ServiceCommons.authenticate(token, response);
+		if (user == null){
+			return response;
+		}
+		try {
+			KeyValuePair<String, Object> qParams = new KeyValuePair<String, Object>("email", email);
+			User targetUser = baseDao.executeNamedQuery("User.findByEmail", qParams);
+			
+			if (targetUser == null) {
+				response.fail(ServiceErrorCode.USER_NOT_FOUND);
+				return response;
+			}
+			
+			UserFollowLink link = new UserFollowLink();
+			link.setFollowingUser(user);
+			link.setFollowedUser(targetUser);
+			baseDao.save(link);
+			
+			response.succeed();
+			return response;
+		}
+		catch(Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		
 	}
 	
 	@WebMethod
