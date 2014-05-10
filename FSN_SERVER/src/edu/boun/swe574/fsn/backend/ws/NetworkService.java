@@ -66,6 +66,11 @@ public class NetworkService {
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
+		if (token == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
 		// authenticate token
 		User user = ServiceCommons.authenticate(token, response);
 		if (user==null){
@@ -128,8 +133,15 @@ public class NetworkService {
 	public BaseServiceResponse follow(	@WebParam(name="token")		String token, 
 										@WebParam(name="email")		String email){
 		
-		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		BaseServiceResponse response= new BaseServiceResponse();
+		
+		if(token == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
 		
 		User user = ServiceCommons.authenticate(token, response);
 		if (user == null){
