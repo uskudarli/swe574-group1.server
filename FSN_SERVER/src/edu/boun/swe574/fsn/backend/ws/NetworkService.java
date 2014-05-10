@@ -1,6 +1,9 @@
 package edu.boun.swe574.fsn.backend.ws;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jws.WebMethod;
@@ -20,6 +23,7 @@ import edu.boun.swe574.fsn.backend.ws.response.GetRecipeFeedsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.SearchForUsersResponse;
 import edu.boun.swe574.fsn.backend.ws.response.info.UserInfo;
 import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
+import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
 
 @WebService(name="NetworkService", serviceName="NetworkService")
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
@@ -53,13 +57,42 @@ public class NetworkService {
 	
 	@WebMethod
 	public BaseServiceResponse editProfile(	@WebParam(name="token") 			String token, 
-							@WebParam(name="location") 			String location, 
-							@WebParam(name="dateOfBirth")		String dateOfBirth, 
-							@WebParam(name="profileMessage")	String profileMessage ){ 
-//							Ingredient[] ingredientBlackList, 
-//							Byte[] image){
+											@WebParam(name="location") 			String location, 
+											@WebParam(name="dateOfBirth")		String dateOfBirth, 
+											@WebParam(name="profileMessage")	String profileMessage ){
 		
-		return new BaseServiceResponse();
+		BaseServiceResponse response = new BaseServiceResponse();
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		// authenticate token
+		User user = ServiceCommons.authenticate(token, response);
+		if (user==null){
+			return response;
+		}
+		
+		try {
+			// TODO: Turkish character problems
+			KeyValuePair<String,Object> qParams = new KeyValuePair<String,Object>("uid", user.getId());
+			UserProfile up = baseDao.executeNamedQuery("UserProfile.getUserProfile", qParams);
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+			Date parsedDate = formatter.parse(dateOfBirth);
+			
+			up.setDateOfBirth(parsedDate);
+			up.setLocation(location);
+			up.setProfileMessage(profileMessage);
+			
+			baseDao.update(up);
+			
+			response.succeed();
+			return response;
+		}
+		catch(ParseException pe){
+			System.out.println("parse exception encountered!");
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
 	}
 	
 	@WebMethod

@@ -6,10 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,8 +41,20 @@ public class UserProfile extends BaseModel{
 	@JoinColumn(name="FOODBLACKLISTID", nullable=true)
 	private FoodBlacklist blacklist;
 	
+	@Column(name="IMAGE_DATA")
+	@Lob
+	private byte[] image;
+	
 //	Getters and setters
 	
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
 	public String getLocation() {
 		return location;
 	}

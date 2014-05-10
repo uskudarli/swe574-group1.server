@@ -17,6 +17,7 @@ import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
 import edu.boun.swe574.fsn.backend.db.model.AccessToken;
 import edu.boun.swe574.fsn.backend.db.model.User;
+import edu.boun.swe574.fsn.backend.db.model.UserProfile;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.LoginResponse;
 import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
@@ -67,11 +68,13 @@ public class AuthService {
                 user.setSurname(surname);
                 
                 baseDao.save(user);
-
-                response.setResultCode(ResultCode.SUCCESS.getCode());
-
-                System.out.println("User save try block end hit");
-
+                
+                UserProfile up = new UserProfile();
+                up.setUser(user);
+                
+                baseDao.save(up);
+                
+                response.succeed();
         }
         catch(RollbackException rbe){
 
