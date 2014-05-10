@@ -229,6 +229,10 @@ public class NetworkService {
 		}		
 		
 	}
-	
+
+	@WebMethod
+	public BaseServiceResponse deletePhoto(@WebParam(name="token") String token){
+		return updatePhoto(token, null);
+	}
 	
 }
