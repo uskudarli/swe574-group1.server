@@ -31,6 +31,7 @@ import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
 public class NetworkService {
 
+	// STATUS: incomplete
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public GetProfileResponse getProfileOfSelf(@WebParam(name="token") String token){
@@ -57,6 +58,7 @@ public class NetworkService {
 		return response;
 	}
 	
+	// STATUS: untested
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse editProfile(	@WebParam(name="token") 			String token, 
@@ -103,6 +105,7 @@ public class NetworkService {
 		
 	}
 	
+	// STATUS: not started
 	@WebMethod
 	public SearchForUsersResponse searchForUsers(@WebParam(name="token")			String token, 
 							  @WebParam(name="queryString") 	String queryString) {
@@ -123,12 +126,14 @@ public class NetworkService {
 		return response;
 	}
 	
+	// STATUS: not started
 	@WebMethod
 	public GetProfileResponse getProfileOfOtherUser(	@WebParam(name="token") 	String token, 
 										@WebParam(name="email")		String email){
 		return new GetProfileResponse();
 	}
 	
+	// STATUS: untested
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse follow(	@WebParam(name="token")		String token, 
@@ -173,6 +178,7 @@ public class NetworkService {
 		
 	}
 	
+	// STATUS: not started
 	@WebMethod
 	public SearchForUsersResponse getFollowedUser(	@WebParam(name="token")	String token){
 		SearchForUsersResponse response = new SearchForUsersResponse();
@@ -189,6 +195,7 @@ public class NetworkService {
 		return response;
 	}
 	
+	// STATUS: not started
 	@WebMethod
 	public GetRecipeFeedsResponse getRecipeFeeds(	@WebParam(name="token")		String token, 
 								@WebParam(name="index")		Integer index, 
@@ -196,6 +203,7 @@ public class NetworkService {
 		return new GetRecipeFeedsResponse();
 	}
 
+	// STATUS: untested
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse updatePhoto( @WebParam(name="token") String token,
@@ -231,10 +239,12 @@ public class NetworkService {
 		
 	}
 
+	// STATUS: untested
 	@WebMethod
 	public BaseServiceResponse deletePhoto(@WebParam(name="token") String token){
 		return updatePhoto(token, null);
 	}
+	
 	
 	public BaseServiceResponse updateIngredientBlacklist(	@WebParam(name="token") String token,
 															@WebParam(name="blacklist") List<Food> blacklist ){
