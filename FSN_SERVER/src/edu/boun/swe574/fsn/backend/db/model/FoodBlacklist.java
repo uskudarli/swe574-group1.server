@@ -18,8 +18,26 @@ public class FoodBlacklist extends BaseModel {
 	@JoinColumn(name = "FOOD_ID")
 	private Food food;
 	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_PROFILE_ID")
 	private UserProfile userProfile;
 	
+	
+	public Food getFood() {
+		return food;
+	}
+
+	public void setFood(Food food) {
+		this.food = food;
+	}
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+
 }

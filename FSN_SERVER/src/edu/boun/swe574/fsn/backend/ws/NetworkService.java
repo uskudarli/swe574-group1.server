@@ -16,6 +16,7 @@ import javax.jws.soap.SOAPBinding.Use;
 import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
 import edu.boun.swe574.fsn.backend.db.model.Food;
+import edu.boun.swe574.fsn.backend.db.model.FoodBlacklist;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
@@ -24,8 +25,10 @@ import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeFeedsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.SearchForUsersResponse;
 import edu.boun.swe574.fsn.backend.ws.response.info.UserInfo;
+import edu.boun.swe574.fsn.backend.ws.util.InvalidTokenException;
 import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
 import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
+import edu.boun.swe574.fsn.backend.ws.util.TokenExpiredException;
 
 @WebService(name="NetworkService", serviceName="NetworkService")
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
@@ -39,11 +42,14 @@ public class NetworkService {
 		GetProfileResponse response = new GetProfileResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		// TODO: Code review: passing response (out) variable to the authenticate method
-		// there may be a neater way of doing this?
-		User user = ServiceCommons.authenticate(token, response);
-		
-		if(user==null){
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
 			return response;
 		}
 		
@@ -73,10 +79,15 @@ public class NetworkService {
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
-		
-		// authenticate token
-		User user = ServiceCommons.authenticate(token, response);
-		if (user==null){
+
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
 			return response;
 		}
 		
@@ -147,12 +158,18 @@ public class NetworkService {
 		}
 		
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
-		
-		
-		User user = ServiceCommons.authenticate(token, response);
-		if (user == null){
+
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
 			return response;
 		}
+		
 		try {
 			KeyValuePair<String, Object> qParams = new KeyValuePair<String, Object>("email", email);
 			User targetUser = baseDao.executeNamedQuery("User.findByEmail", qParams);
@@ -215,8 +232,14 @@ public class NetworkService {
 			return response;
 		}
 		
-		User user = ServiceCommons.authenticate(token, response);
-		if (user == null){
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
 			return response;
 		}
 		
@@ -246,8 +269,62 @@ public class NetworkService {
 	}
 	
 	
-	public BaseServiceResponse updateIngredientBlacklist(	@WebParam(name="token") String token,
-															@WebParam(name="blacklist") List<Food> blacklist ){
+//	public BaseServiceResponse updateIngredientBlacklist(	@WebParam(name="token") String token,
+//															@WebParam(name="blacklist") List<Food> blacklist ){
+//		return new BaseServiceResponse();
+//	}
+	
+	// STATUS: not started
+	public BaseServiceResponse addToBlacklist (@WebParam(name="token") String token,
+												@WebParam(name="addlist") List<Food> addlist){
+		
+		BaseServiceResponse response = new BaseServiceResponse();
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		if(token == null || addlist == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		UserProfile up = ServiceCommons.getProfile(user);
+		if (up == null){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		for(Food f : addlist){
+			try {
+				FoodBlacklist blitem = new FoodBlacklist();
+				blitem.setFood(f);
+				blitem.setUserProfile(up);
+				baseDao.save(up);
+			} catch(Exception e){
+				// an integrity error could occur (?) if there is a unique constraint
+				// on the DB and the service caller tries to add a Food-UserProfile link
+				// that already was in the table
+				response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+				return response;
+			}
+		}
+		
+		return response;
+	}
+	
+	// STATUS: not started
+	public BaseServiceResponse removeFromBlacklist (@WebParam(name="token") String token,
+													@WebParam(name="rmlist") String rmlist){
 		return new BaseServiceResponse();
 	}
+	
 }
