@@ -196,20 +196,45 @@ public class NetworkService {
 		
 	}
 	
-	// STATUS: not started
+	// STATUS: untested
 	@WebMethod
 	public SearchForUsersResponse getFollowedUser(	@WebParam(name="token")	String token){
-		SearchForUsersResponse response = new SearchForUsersResponse();
 		
-		UserInfo user = new UserInfo();
-		user.setName("Marcelino");
-		user.setSurname("Sanchez");
-		user.setEmail("marcelino@sanchez.com");
-		user.setUserId(1L);
+		SearchForUsersResponse response = new SearchForUsersResponse();
+		if (token == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		List<UserFollowLink> linkList = baseDao.findByCriteria(UserFollowLink.class, 
+																"followingUser", user);
 		
 		List<UserInfo> userList = new ArrayList<UserInfo>();
-		response.setUserList(userList);
 		
+		for (UserFollowLink link : linkList){
+			UserInfo ui = new UserInfo();
+			ui.setName(link.getFollowedUser().getName());
+			ui.setSurname(link.getFollowedUser().getSurname());
+			ui.setEmail(link.getFollowedUser().getEmail());
+			ui.setUserId(link.getFollowedUser().getId());
+			userList.add(ui);
+		}
+			
+		response.setUserList(userList);
+		response.succeed();
 		return response;
 	}
 	
