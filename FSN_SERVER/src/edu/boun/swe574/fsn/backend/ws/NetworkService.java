@@ -20,6 +20,7 @@ import edu.boun.swe574.fsn.backend.db.model.FoodBlacklist;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
+import edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeFeedsResponse;
@@ -274,9 +275,9 @@ public class NetworkService {
 //		return new BaseServiceResponse();
 //	}
 	
-	// STATUS: not started
+	// STATUS: untested
 	public BaseServiceResponse addToBlacklist (@WebParam(name="token") String token,
-												@WebParam(name="addlist") List<Food> addlist){
+												@WebParam(name="addlist") List<FoodInfo> addlist){
 		
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
@@ -303,9 +304,11 @@ public class NetworkService {
 			return response;
 		}
 		
-		for(Food f : addlist){
+		for(FoodInfo fi : addlist){
 			try {
 				FoodBlacklist blitem = new FoodBlacklist();
+				// the following line's logic is untested!!!
+				Food f = baseDao.find(Food.class, fi.getFoodId());
 				blitem.setFood(f);
 				blitem.setUserProfile(up);
 				baseDao.save(up);
@@ -318,13 +321,54 @@ public class NetworkService {
 			}
 		}
 		
+		response.succeed();
 		return response;
 	}
 	
-	// STATUS: not started
+	// STATUS: untested
 	public BaseServiceResponse removeFromBlacklist (@WebParam(name="token") String token,
-													@WebParam(name="rmlist") String rmlist){
-		return new BaseServiceResponse();
+													@WebParam(name="rmlist") List<FoodInfo> rmlist){
+		BaseServiceResponse response = new BaseServiceResponse();
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		if(token == null || rmlist == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		UserProfile up = ServiceCommons.getProfile(user);
+		if (up == null){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		try {
+			for (FoodInfo fi : rmlist){
+				Food f = baseDao.find(Food.class, fi.getFoodId());
+				List<FoodBlacklist> bllist = baseDao.findByCriteria(FoodBlacklist.class, 
+												new String[] {"userProfile", "food"}, 
+												new Object[] {up, f});
+				baseDao.delete(bllist);
+			}
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		response.succeed();
+		return response;
 	}
 	
 }
