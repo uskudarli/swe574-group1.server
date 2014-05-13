@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
-import edu.boun.swe574.fsn.backend.ws.response.info.IngredientInfo;
+import edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo;
 
 public class GetProfileResponse extends BaseServiceResponse {
 	
@@ -12,7 +12,7 @@ public class GetProfileResponse extends BaseServiceResponse {
 	private Date dateOfBirth;
 	private String profileMessage;
 	private byte[] image;
-	private List<IngredientInfo> ingredientBlackList;
+	private List<FoodInfo> foodBlackList;
 	
 	public String getLocation() {
 		return location;
@@ -38,11 +38,11 @@ public class GetProfileResponse extends BaseServiceResponse {
 	public void setImage(byte[] image) {
 		this.image = image;
 	}
-	public List<IngredientInfo> getIngredientBlackList() {
-		return ingredientBlackList;
+	public List<FoodInfo> getIngredientBlackList() {
+		return this.foodBlackList;
 	}
-	public void setIngredientBlackList(List<IngredientInfo> ingredientBlackList) {
-		this.ingredientBlackList = ingredientBlackList;
+	public void setIngredientBlackList(List<FoodInfo> ingredientBlackList) {
+		this.foodBlackList = ingredientBlackList;
 	}
 	
 	public void mapUserProfile(UserProfile up){
@@ -50,7 +50,7 @@ public class GetProfileResponse extends BaseServiceResponse {
 		this.location = up.getLocation();
 		
 		// TODO: fill this with proper blacklist items
-		this.ingredientBlackList = null;
+		this.foodBlackList = null;
 		this.image = up.getImage();
 		this.profileMessage = up.getProfileMessage();
 	}

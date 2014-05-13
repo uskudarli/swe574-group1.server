@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 @Table(name = "User")
 @NamedQueries({
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+    @NamedQuery(name = "User.findByName" , query = "SELECT u FROM User u WHERE u.name LIKE :name OR u.surname LIKE :name")
 })
 public class User extends BaseModel {
 	

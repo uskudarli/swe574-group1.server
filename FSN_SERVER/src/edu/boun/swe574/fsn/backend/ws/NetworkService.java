@@ -117,24 +117,51 @@ public class NetworkService {
 		
 	}
 	
-	// STATUS: not started
+	// STATUS: untested
+	@SuppressWarnings("unchecked")
 	@WebMethod
 	public SearchForUsersResponse searchForUsers(@WebParam(name="token")			String token, 
-							  @WebParam(name="queryString") 	String queryString) {
+							  					@WebParam(name="queryString") 	String queryString) {
 		
 		SearchForUsersResponse response = new SearchForUsersResponse();
 		
-		UserInfo user = new UserInfo();
-		user.setName("Marcelino");
-		user.setSurname("Sanchez");
-		user.setEmail("marcelino@sanchez.com");
-		user.setUserId(1L);
+		if (token == null || queryString == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+
+		try {
+			ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
 		
-		List<UserInfo> userList = new ArrayList<UserInfo>();
-		userList.add(user);
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		response.setUserList(userList);
+		KeyValuePair<String, Object> qParams = new KeyValuePair<String, Object>("name", "%" + queryString + "%");
+		List<User> userList = baseDao.executeNamedQueryGetList("User.findByName", qParams);
 		
+		
+		List<UserInfo> userInfoList = new ArrayList<UserInfo>();
+		for (User u : userList){
+			UserInfo uinfo = new UserInfo();
+			uinfo.setEmail(u.getEmail());
+			uinfo.setName(u.getName());
+			uinfo.setSurname(u.getSurname());
+			uinfo.setUserId(u.getId());
+			uinfo.setProfileMessage(ServiceCommons.getProfile(u).getProfileMessage());
+			
+			userInfoList.add(uinfo);
+		}
+		
+		
+		response.setUserList(userInfoList);
+		
+		response.succeed();
 		return response;
 	}
 	
@@ -293,12 +320,6 @@ public class NetworkService {
 	public BaseServiceResponse deletePhoto(@WebParam(name="token") String token){
 		return updatePhoto(token, null);
 	}
-	
-	
-//	public BaseServiceResponse updateIngredientBlacklist(	@WebParam(name="token") String token,
-//															@WebParam(name="blacklist") List<Food> blacklist ){
-//		return new BaseServiceResponse();
-//	}
 	
 	// STATUS: untested
 	public BaseServiceResponse addToBlacklist (@WebParam(name="token") String token,
