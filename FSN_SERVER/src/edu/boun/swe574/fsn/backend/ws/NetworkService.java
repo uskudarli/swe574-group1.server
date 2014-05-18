@@ -38,7 +38,7 @@ public class NetworkService {
 	// STATUS: incomplete
 	@SuppressWarnings("unchecked")
 	@WebMethod
-	public GetProfileResponse getProfileOfSelf(@WebParam(name="token") String token){
+	public GetProfileResponse getProfileOfSelf( @WebParam(name="token") String token){
 		
 		GetProfileResponse response = new GetProfileResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
@@ -65,7 +65,7 @@ public class NetworkService {
 		return response;
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse editProfile(	@WebParam(name="token") 			String token, 
@@ -76,7 +76,7 @@ public class NetworkService {
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		if (token == null){
+		if (token == null || location == null || dateOfBirth == null || profileMessage == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -117,7 +117,7 @@ public class NetworkService {
 		
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public SearchForUsersResponse searchForUsers(@WebParam(name="token")			String token, 
@@ -172,7 +172,7 @@ public class NetworkService {
 		return new GetProfileResponse();
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse follow(	@WebParam(name="token")		String token, 
@@ -180,7 +180,7 @@ public class NetworkService {
 		
 		BaseServiceResponse response= new BaseServiceResponse();
 		
-		if(token == null){
+		if(token == null || email == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -223,7 +223,7 @@ public class NetworkService {
 		
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public SearchForUsersResponse getFollowedUser(	@WebParam(name="token")	String token){
 		
@@ -273,14 +273,14 @@ public class NetworkService {
 		return new GetRecipeFeedsResponse();
 	}
 
-	// STATUS: untested
+	// STATUS: OK
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public BaseServiceResponse updatePhoto( @WebParam(name="token") String token,
 											@WebParam(name="image") byte[] image){
 		
 		BaseServiceResponse response = new BaseServiceResponse();
-		if (token == null || image == null){
+		if (token == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -315,13 +315,14 @@ public class NetworkService {
 		
 	}
 
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public BaseServiceResponse deletePhoto(@WebParam(name="token") String token){
 		return updatePhoto(token, null);
 	}
-	
+	/*
 	// STATUS: untested
+	@WebMethod
 	public BaseServiceResponse addToBlacklist (@WebParam(name="token") String token,
 												@WebParam(name="addlist") List<FoodInfo> addlist){
 		
@@ -372,6 +373,7 @@ public class NetworkService {
 	}
 	
 	// STATUS: untested
+	@WebMethod
 	public BaseServiceResponse removeFromBlacklist (@WebParam(name="token") String token,
 													@WebParam(name="rmlist") List<FoodInfo> rmlist){
 		BaseServiceResponse response = new BaseServiceResponse();
@@ -416,5 +418,5 @@ public class NetworkService {
 		response.succeed();
 		return response;
 	}
-	
+	*/
 }

@@ -12,7 +12,7 @@ public class DaoFactory {
 
     private static final String                    	PERSISTENCE_UNIT_NAME        = "FSN_PU";
     private static final String                    	PERSISTENCE_UNIT_PROD_NAME        = "FSN_PROD";
-    private static final boolean					IS_PROD 					= false;
+    private static final boolean					IS_PROD 					= true;
     
     private static EntityManagerFactory            emf                          = null;
     
