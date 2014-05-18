@@ -21,6 +21,7 @@ import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
 import edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo;
+import edu.boun.swe574.fsn.backend.ws.request.info.FoodList;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeFeedsResponse;
@@ -35,12 +36,18 @@ import edu.boun.swe574.fsn.backend.ws.util.TokenExpiredException;
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
 public class NetworkService {
 
-	// STATUS: incomplete
+	// STATUS: OK
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public GetProfileResponse getProfileOfSelf( @WebParam(name="token") String token){
-		
+
 		GetProfileResponse response = new GetProfileResponse();
+		
+		if (token == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
 		User user;
@@ -54,13 +61,33 @@ public class NetworkService {
 			return response;
 		}
 		
-		KeyValuePair<String,Object> qParams = new KeyValuePair<String,Object>("uid", user.getId());
-		UserProfile up = baseDao.executeNamedQuery("UserProfile.getUserProfile", qParams);
+		try {
+
+			KeyValuePair<String,Object> qParams = new KeyValuePair<String,Object>("uid", user.getId());
+			UserProfile up = baseDao.executeNamedQuery("UserProfile.getUserProfile", qParams);
+			
+			if(up != null){
+				response.mapUserProfile(up);
+			}
+			
+			List<FoodBlacklist> bllist = baseDao.findByCriteria(FoodBlacklist.class, 
+					new String[] {"userProfile"}, 
+					new Object[] {up});
+			
+			List<FoodInfo> returnBlacklist = new ArrayList<FoodInfo>();
+			for(FoodBlacklist bl : bllist){
+				FoodInfo fi = new FoodInfo();
+				fi.setFoodId(bl.getFood().getId());
+				returnBlacklist.add(fi);
+			}
+			
+			response.setIngredientBlackList(returnBlacklist);
 		
-		if(up != null){
-			response.mapUserProfile(up);
+		}catch(Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
 		}
-		
+			
 		response.succeed();
 		return response;
 	}
@@ -320,19 +347,21 @@ public class NetworkService {
 	public BaseServiceResponse deletePhoto(@WebParam(name="token") String token){
 		return updatePhoto(token, null);
 	}
-	/*
-	// STATUS: untested
+
+	// STATUS: OK
 	@WebMethod
 	public BaseServiceResponse addToBlacklist (@WebParam(name="token") String token,
-												@WebParam(name="addlist") List<FoodInfo> addlist){
+												@WebParam(name="addlistIn") FoodList addlistIn){
 		
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		if(token == null || addlist == null){
+		if(token == null || addlistIn == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
+		
+		List<FoodInfo> addlist = addlistIn.getList();
 		
 		User user;
 		try {
@@ -354,11 +383,12 @@ public class NetworkService {
 		for(FoodInfo fi : addlist){
 			try {
 				FoodBlacklist blitem = new FoodBlacklist();
-				// the following line's logic is untested!!!
-				Food f = baseDao.find(Food.class, fi.getFoodId());
+				Food f = baseDao.find(Food.class, (long)fi.getFoodId());
 				blitem.setFood(f);
 				blitem.setUserProfile(up);
-				baseDao.save(up);
+				if(f != null){
+					baseDao.save(blitem);
+				}
 			} catch(Exception e){
 				// an integrity error could occur (?) if there is a unique constraint
 				// on the DB and the service caller tries to add a Food-UserProfile link
@@ -372,17 +402,19 @@ public class NetworkService {
 		return response;
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public BaseServiceResponse removeFromBlacklist (@WebParam(name="token") String token,
-													@WebParam(name="rmlist") List<FoodInfo> rmlist){
+													@WebParam(name="rmlistIn") FoodList rmlistIn){
 		BaseServiceResponse response = new BaseServiceResponse();
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
-		if(token == null || rmlist == null){
+		if(token == null || rmlistIn == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
+		
+		List<FoodInfo> rmlist = rmlistIn.getList();
 		
 		User user;
 		try {
@@ -403,11 +435,13 @@ public class NetworkService {
 		
 		try {
 			for (FoodInfo fi : rmlist){
-				Food f = baseDao.find(Food.class, fi.getFoodId());
+				Food f = baseDao.find(Food.class, (long)fi.getFoodId());
 				List<FoodBlacklist> bllist = baseDao.findByCriteria(FoodBlacklist.class, 
 												new String[] {"userProfile", "food"}, 
 												new Object[] {up, f});
-				baseDao.delete(bllist);
+				for (FoodBlacklist bl : bllist){
+					baseDao.delete(bl);
+				}
 			}
 		}
 		catch (Exception e){
@@ -418,5 +452,5 @@ public class NetworkService {
 		response.succeed();
 		return response;
 	}
-	*/
+	
 }

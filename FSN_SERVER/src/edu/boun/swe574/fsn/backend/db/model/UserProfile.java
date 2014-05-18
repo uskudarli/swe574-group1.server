@@ -37,10 +37,6 @@ public class UserProfile extends BaseModel{
 	@JoinColumn(name = "USERID", nullable = false)
 	private User user;
 	
-	@ManyToOne(fetch= FetchType.LAZY)
-	@JoinColumn(name="FOODBLACKLISTID", nullable=true)
-	private FoodBlacklist blacklist;
-	
 	@Column(name="IMAGE_DATA")
 	@Lob
 	private byte[] image;
@@ -86,4 +82,5 @@ public class UserProfile extends BaseModel{
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
 }

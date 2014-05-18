@@ -49,7 +49,6 @@ public class GetProfileResponse extends BaseServiceResponse {
 		this.dateOfBirth = up.getDateOfBirth();
 		this.location = up.getLocation();
 		
-		// TODO: fill this with proper blacklist items
 		this.foodBlackList = null;
 		this.image = up.getImage();
 		this.profileMessage = up.getProfileMessage();
