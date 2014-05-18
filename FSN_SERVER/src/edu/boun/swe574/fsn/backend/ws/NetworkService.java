@@ -193,10 +193,63 @@ public class NetworkService {
 	}
 	
 	// STATUS: not started
+	@SuppressWarnings("unchecked")
 	@WebMethod
 	public GetProfileResponse getProfileOfOtherUser(	@WebParam(name="token") 	String token, 
 										@WebParam(name="email")		String email){
-		return new GetProfileResponse();
+		
+		GetProfileResponse response = new GetProfileResponse();
+		
+		if (token == null || email == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		try {
+			ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			KeyValuePair<String, Object> qParams = new KeyValuePair<String, Object>("email", email);
+			User targetUser = baseDao.executeNamedQuery("User.findByEmail", qParams);
+			
+			if (targetUser == null) {
+				response.fail(ServiceErrorCode.USER_NOT_FOUND);
+				return response;
+			}
+			
+			KeyValuePair<String, Object> upParams = new KeyValuePair<String, Object>("uid", targetUser.getId());
+			UserProfile up = baseDao.executeNamedQuery("UserProfile.getUserProfile", upParams);
+			
+			response.mapUserProfile(up);
+			
+			List<FoodBlacklist> bllist = baseDao.findByCriteria(FoodBlacklist.class, 
+					new String[] {"userProfile"}, 
+					new Object[] {up});
+			
+			List<FoodInfo> returnBlacklist = new ArrayList<FoodInfo>();
+			for(FoodBlacklist bl : bllist){
+				FoodInfo fi = new FoodInfo();
+				fi.setFoodId(bl.getFood().getId());
+				returnBlacklist.add(fi);
+			}
+			
+			response.setIngredientBlackList(returnBlacklist);
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		return response;
 	}
 	
 	// STATUS: OK
