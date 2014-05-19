@@ -3,6 +3,7 @@ package edu.boun.swe574.fsn.backend.ws;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
 import edu.boun.swe574.fsn.backend.db.model.Food;
 import edu.boun.swe574.fsn.backend.db.model.FoodBlacklist;
+import edu.boun.swe574.fsn.backend.db.model.Ingredient;
+import edu.boun.swe574.fsn.backend.db.model.Recipe;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
@@ -26,6 +29,7 @@ import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeFeedsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.SearchForUsersResponse;
+import edu.boun.swe574.fsn.backend.ws.response.info.RecipeInfo;
 import edu.boun.swe574.fsn.backend.ws.response.info.UserInfo;
 import edu.boun.swe574.fsn.backend.ws.util.InvalidTokenException;
 import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
@@ -192,7 +196,7 @@ public class NetworkService {
 		return response;
 	}
 	
-	// STATUS: not started
+	// STATUS: OK
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public GetProfileResponse getProfileOfOtherUser(	@WebParam(name="token") 	String token, 
@@ -345,12 +349,77 @@ public class NetworkService {
 		return response;
 	}
 	
-	// STATUS: not started
+	// STATUS: untested
 	@WebMethod
 	public GetRecipeFeedsResponse getRecipeFeeds(	@WebParam(name="token")		String token, 
 								@WebParam(name="index")		Integer index, 
 								@WebParam(name="pageSize")	Integer pageSize){
-		return new GetRecipeFeedsResponse();
+		
+		GetRecipeFeedsResponse response = new GetRecipeFeedsResponse();
+		
+		if (token == null || index == null || pageSize == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+			
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		try {
+			// Get users the user follows
+			List<UserFollowLink> followedList = baseDao.findByCriteria(UserFollowLink.class, 
+																			"followingUser", 
+																			user);
+			
+			// Extract and list the users from the link items
+			List<User> followedUsers = new ArrayList<User>();
+			for (UserFollowLink link : followedList)
+				followedUsers.add(link.getFollowedUser());
+			
+			// for all users, get the recipes which these users prepared
+			List<Recipe> recipeList = new ArrayList<Recipe>();
+			for (User u: followedUsers){
+				List<Recipe> userRecipeList = baseDao.findByCriteria(Recipe.class, "user", u);
+				for (Recipe r: userRecipeList)
+					recipeList.add(r);
+			}
+			
+			// sort from most recent to least
+			// TODO: check the sort!!
+			Collections.sort(recipeList);
+			
+			// set the index / pagesize
+			List<RecipeInfo> riList = new ArrayList<RecipeInfo>();
+			List<Recipe> subList = recipeList.subList(index, pageSize + index);
+			for (Recipe r : subList){
+				RecipeInfo ri = new RecipeInfo();
+				ri.mapRecipe(r);
+				
+				List<Ingredient> ingList = baseDao.findByCriteria(Ingredient.class, "recipe", r);
+				
+				ri.mapIngredientList(ingList);
+				riList.add(ri);
+			}
+			
+			response.setRecipeList(riList);
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+				
+		response.succeed();
+		return response;
 	}
 
 	// STATUS: OK

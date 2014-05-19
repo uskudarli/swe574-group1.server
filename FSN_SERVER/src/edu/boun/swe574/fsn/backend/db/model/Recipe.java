@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 
 @Entity(name = "Recipe")
 @Table(name = "Recipe")
-public class Recipe extends BaseModel {
+public class Recipe extends BaseModel implements Comparable<Recipe> {
 
 	private static final long serialVersionUID = 9012412931235002571L;
 	
@@ -85,5 +85,11 @@ public class Recipe extends BaseModel {
 
 	public void setParentRecipe(Recipe parentRecipe) {
 		this.parentRecipe = parentRecipe;
+	}
+
+
+	@Override
+	public int compareTo(Recipe arg0) {
+		return arg0.getDate().compareTo(this.getDate());
 	}
 }
