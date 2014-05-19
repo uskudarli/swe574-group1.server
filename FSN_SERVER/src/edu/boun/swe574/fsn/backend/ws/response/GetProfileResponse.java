@@ -9,6 +9,8 @@ import edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo;
 public class GetProfileResponse extends BaseServiceResponse {
 	
 	private String location;
+	private String name;
+	private String surname;
 	private Date dateOfBirth;
 	private String profileMessage;
 	private byte[] image;
@@ -52,6 +54,18 @@ public class GetProfileResponse extends BaseServiceResponse {
 		this.foodBlackList = null;
 		this.image = up.getImage();
 		this.profileMessage = up.getProfileMessage();
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getSurname() {
+		return surname;
+	}
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
 
 	

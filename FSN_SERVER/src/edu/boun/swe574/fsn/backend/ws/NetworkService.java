@@ -196,7 +196,7 @@ public class NetworkService {
 		return response;
 	}
 	
-	// STATUS: OK
+	// STATUS: untested issue fix #41
 	@SuppressWarnings("unchecked")
 	@WebMethod
 	public GetProfileResponse getProfileOfOtherUser(	@WebParam(name="token") 	String token, 
@@ -247,6 +247,8 @@ public class NetworkService {
 			}
 			
 			response.setIngredientBlackList(returnBlacklist);
+			response.setName(targetUser.getName());
+			response.setSurname(targetUser.getSurname());
 		}
 		catch (Exception e){
 			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
