@@ -2,6 +2,8 @@ package edu.boun.swe574.fsn.backend.ws.response.info;
 
 import java.util.Date;
 
+import edu.boun.swe574.fsn.backend.db.model.Recipe;
+
 public class RevisionInfo {
 	
 	private Date revisionDate;
@@ -39,6 +41,19 @@ public class RevisionInfo {
 	}
 	public void setParentRecipeId(long parentRecipeId) {
 		this.parentRecipeId = parentRecipeId;
+	}
+	
+	public static RevisionInfo mapRecipe(Recipe r){
+		
+		RevisionInfo revInfo = new RevisionInfo();
+		
+		revInfo.setCurrentRecipeId(r.getId());
+		revInfo.setParentRecipeId(r.getParentRecipe().getId());
+		revInfo.setRevisionDate(r.getDate());
+		revInfo.setRevisionNote(r.getVersionNote());
+		revInfo.setUser(UserInfo.mapUser(r.getUser()));
+		return revInfo;
+		
 	}
 	
 }

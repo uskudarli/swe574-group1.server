@@ -1,5 +1,9 @@
 package edu.boun.swe574.fsn.backend.ws;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -7,55 +11,354 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 
+import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
+import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
+import edu.boun.swe574.fsn.backend.db.model.Food;
+import edu.boun.swe574.fsn.backend.db.model.Ingredient;
+import edu.boun.swe574.fsn.backend.db.model.Recipe;
+import edu.boun.swe574.fsn.backend.db.model.User;
+import edu.boun.swe574.fsn.backend.db.model.UserRecipeRating;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetIngredientsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRevisionHistoryOfRecipeResponse;
+import edu.boun.swe574.fsn.backend.ws.response.info.FoodInfo;
+import edu.boun.swe574.fsn.backend.ws.response.info.IngredientInfo;
 import edu.boun.swe574.fsn.backend.ws.response.info.RecipeInfo;
+import edu.boun.swe574.fsn.backend.ws.response.info.RevisionInfo;
+import edu.boun.swe574.fsn.backend.ws.util.InvalidTokenException;
+import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
+import edu.boun.swe574.fsn.backend.ws.util.TokenExpiredException;
 
 @WebService(name="FoodsService", serviceName="FoodsService")
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
 public class FoodsService {
 
+	// STATUS: untested
 	@WebMethod
 	public BaseServiceResponse createRecipe(	@WebParam(name="token")		String token, 
-								@WebParam(name="recipe")	RecipeInfo recipe){
-		return new BaseServiceResponse();
+												@WebParam(name="recipe")	RecipeInfo recipe){
+		
+		BaseServiceResponse response = new BaseServiceResponse();
+		
+		if (token == null || recipe == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			Recipe r = new Recipe();
+			
+			r.setDate(new Date());
+			r.setDirections(recipe.getDirections());
+			r.setTitle(recipe.getRecipeName());
+			r.setUser(user);
+			r.setVersionNote("Initial version");
+			
+			baseDao.save(r);
+			
+			List<IngredientInfo> inglist = recipe.getIngredientList();
+			
+			for (IngredientInfo ing : inglist){
+				Ingredient i = new Ingredient();
+				i.setAmount(ing.getAmount());
+				Food food = baseDao.find(Food.class, (long)ing.getFood().getFoodId());
+				i.setFood(food);
+				i.setRecipe(r);
+				i.setUnit(ing.getUnit());
+				
+				if (ing != null){
+					baseDao.save(i);
+				}
+			}
+			
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		response.succeed();
+		return response;
 	}
 	
+	// STATUS: untested
 	@WebMethod
 	public GetIngredientsResponse getIngredients(	@WebParam(name="token")			String token, 
 								@WebParam(name="queryString")	String queryString){
-		return new GetIngredientsResponse();
+		GetIngredientsResponse response = new GetIngredientsResponse();
+		
+		if (token == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		try {
+			ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			List<Food> foodList = baseDao.findByCriteria(Food.class, "name", queryString + "%");
+			List<FoodInfo> fiList = new ArrayList<FoodInfo>();
+			
+			for (Food f : foodList){
+				FoodInfo fi = new FoodInfo();
+				fi.setIngredientId(f.getId());
+				fi.setIngredientName(f.getName());
+				fiList.add(fi);
+			}
+			
+			response.setListOfIngredients(fiList);
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		response.succeed();
+		return response;
 	}
 	
+	// STATUS: untested
 	@WebMethod
 	public BaseServiceResponse createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
 											@WebParam(name="recipe")			RecipeInfo recipe, 
 											@WebParam(name="parentRecipeId")	long parentRecipeId,  
 											@WebParam(name="revisionNote")		String revisionNote){
-		return new BaseServiceResponse();
+		BaseServiceResponse response = new BaseServiceResponse();
+		
+		if (token == null || recipe == null || parentRecipeId == 0L || revisionNote == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			Recipe r = new Recipe();
+			r.setDate(new Date());
+			r.setDirections(recipe.getDirections());
+			r.setParentRecipe(baseDao.find(Recipe.class, parentRecipeId));
+			r.setTitle(recipe.getRecipeName());
+			r.setUser(user);
+			
+			List<IngredientInfo> inglist = recipe.getIngredientList();
+			
+			for (IngredientInfo ing : inglist){
+				
+				Ingredient i = new Ingredient();
+				i.setAmount(ing.getAmount());
+				Food food = baseDao.find(Food.class, (long)ing.getFood().getFoodId());
+				i.setFood(food);
+				i.setRecipe(r);
+				i.setUnit(ing.getUnit());
+				
+				if (ing != null){
+					baseDao.save(i);
+				}
+			}
+			
+			r.setVersionNote(revisionNote);
+			
+			baseDao.save(r);
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		response.succeed();
+		return response;
 	}
 	
+	// STATUS: untested
 	@WebMethod
 	public GetRecipeResponse getRecipe(	@WebParam(name="token")		String token, 
 							@WebParam(name="recipeId")	long recipeId){
 		
-		return new GetRecipeResponse();
+		GetRecipeResponse response = new GetRecipeResponse();
+		
+		// TODO: test the 0L logic
+		if (token == null || recipeId == 0L){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		try {
+			ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			
+			Recipe r = baseDao.find(Recipe.class, recipeId);
+			RecipeInfo ri = new RecipeInfo();
+			
+			ri.mapRecipe(r);
+			//TODO: also get the ingredient list + rating
+			
+			//TODO: debug&test the query logic!
+			List<Ingredient> inglist = baseDao.findByCriteria(Ingredient.class, "recipe", r);
+			
+			//TODO: debug&test the map logic
+			ri.mapIngredientList(inglist);
+			
+			List<UserRecipeRating> rateList = baseDao.findByCriteria(UserRecipeRating.class, "recipe", r);
+			double avg = 0;
+			for (UserRecipeRating rate : rateList){
+				avg += (double)rate.getRating();
+			}
+			avg /= rateList.size();
+			
+			//TODO: What happens in the typecast here??
+			ri.setRating((int)avg);
+			
+			response.setRecipe(ri);
+		}
+		catch (Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		response.succeed();
+		return response;
 	}
 	
+	// STATUS: untested
 	@WebMethod
 	public BaseServiceResponse rateRecipe(	@WebParam(name="token")		String token, 
 							@WebParam(name="recipeId")	long recipeId, 
 							@WebParam(name="rateValue")	Integer rateValue){
+		BaseServiceResponse response = new BaseServiceResponse();
+		
+		if (token == null || recipeId == 0L || rateValue == null){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		User user;
+		try {
+			user = ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			Recipe r = baseDao.find(Recipe.class, recipeId);
+			if (r == null){
+				response.fail(ServiceErrorCode.RECIPE_NOT_FOUND);
+				return response;
+			}
+			
+			if (rateValue < 0 || rateValue > 5){
+				response.fail(ServiceErrorCode.RATE_VALUE_INVALID);
+				return response;
+			}
+			
+			UserRecipeRating rate = new UserRecipeRating();
+			
+			rate.setUser(user);
+			rate.setRating(rateValue);
+			rate.setRecipe(r);
+			
+			baseDao.save(rate);
+		}
+		catch(Exception e){
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
 		
 		return new BaseServiceResponse();
 	}
 	
+	// STATUS: untested
 	@WebMethod
 	public GetRevisionHistoryOfRecipeResponse getRevisionHistoryOfRecipe(	@WebParam(name="token")		String token, 
 											@WebParam(name="recipeId")	long recipeId){
 		
-		return new GetRevisionHistoryOfRecipeResponse();
+		GetRevisionHistoryOfRecipeResponse response = new GetRevisionHistoryOfRecipeResponse();
+		
+		if (token == null || recipeId == 0L){
+			response.fail(ServiceErrorCode.MISSING_PARAM);
+			return response;
+		}
+		
+		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
+		
+		try {
+			ServiceCommons.authenticate(token, response);
+		} catch (InvalidTokenException e) {
+			response.fail(ServiceErrorCode.TOKEN_INVALID);
+			return response;
+		} catch (TokenExpiredException e) {
+			response.fail(ServiceErrorCode.TOKEN_EXPIRED);
+			return response;
+		}
+		
+		try {
+			List<RevisionInfo> riList = new ArrayList<RevisionInfo>();
+			
+			Recipe root = baseDao.find(Recipe.class, recipeId);
+			riList.add(RevisionInfo.mapRecipe(root));
+			
+			while (root.getParentRecipe() != null){
+				root = root.getParentRecipe();
+				riList.add(RevisionInfo.mapRecipe(root));
+			}
+			
+			response.setListOfRevisions(riList);
+		}
+		catch (Exception e) {
+			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+			return response;
+		}
+		
+		response.succeed();
+		return response;
 	}
 }

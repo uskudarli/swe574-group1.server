@@ -1,7 +1,11 @@
 package edu.boun.swe574.fsn.backend.ws.response.info;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import edu.boun.swe574.fsn.backend.db.model.Ingredient;
+import edu.boun.swe574.fsn.backend.db.model.Recipe;
 
 public class RecipeInfo {
 	
@@ -62,5 +66,33 @@ public class RecipeInfo {
 	public void setIngredientList(List<IngredientInfo> ingredientList) {
 		this.ingredientList = ingredientList;
 	}
+	
+	public void mapRecipe(Recipe r){
+		this.setCreateDate(r.getDate());
+		this.setDirections(r.getDirections());
+		this.setOwnerName(r.getUser().getName());
+		this.setOwnerSurname(r.getUser().getSurname());
+		
+		// fill this somewhere else!!
+		this.setRating(0);
+		this.setRecipeId(r.getId());
+		this.setRecipeName(r.getTitle());
+	}
 
+	public void mapIngredientList(List<Ingredient> list){
+		List<IngredientInfo> iilist = new ArrayList<IngredientInfo>();
+		for (Ingredient i : list){
+			IngredientInfo info = new IngredientInfo();
+			info.setAmount(i.getAmount());
+			edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo fi = new edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo();
+			
+			//TODO: does not set the name!!
+			fi.setFoodId(i.getFood().getId());
+			info.setFood(fi);
+			info.setUnit(i.getUnit());
+			
+			iilist.add(info);
+		}
+		this.setIngredientList(iilist);
+	}
 }
