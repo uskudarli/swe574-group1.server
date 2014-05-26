@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
-import edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo;
+import edu.boun.swe574.fsn.backend.ws.response.info.FoodInfo;
 
 public class GetProfileResponse extends BaseServiceResponse {
 	

@@ -84,7 +84,7 @@ public class RecipeInfo {
 		for (Ingredient i : list){
 			IngredientInfo info = new IngredientInfo();
 			info.setAmount(i.getAmount());
-			edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo fi = new edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo();
+			FoodInfo fi = new FoodInfo();
 			
 			//TODO: does not set the name!!
 			fi.setFoodId(i.getFood().getId());

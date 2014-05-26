@@ -23,7 +23,7 @@ import edu.boun.swe574.fsn.backend.db.model.Recipe;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
-import edu.boun.swe574.fsn.backend.ws.request.info.FoodInfo;
+import edu.boun.swe574.fsn.backend.ws.response.info.FoodInfo;
 import edu.boun.swe574.fsn.backend.ws.request.info.FoodList;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetProfileResponse;

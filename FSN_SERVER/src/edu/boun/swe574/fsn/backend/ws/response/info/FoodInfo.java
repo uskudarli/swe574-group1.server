@@ -2,20 +2,20 @@ package edu.boun.swe574.fsn.backend.ws.response.info;
 
 public class FoodInfo {
 	
-	private long ingredientId;
-	private String ingredientName;
+	private long foodId;
+	private String foodName;
 	
-	public long getIngredientId() {
-		return ingredientId;
+	public long getFoodId() {
+		return this.foodId;
 	}
-	public void setIngredientId(long ingredientId) {
-		this.ingredientId = ingredientId;
+	public void setFoodId(long foodId) {
+		this.foodId = foodId;
 	}
-	public String getIngredientName() {
-		return ingredientName;
+	public String getFoodName() {
+		return foodName;
 	}
-	public void setIngredientName(String ingredientName) {
-		this.ingredientName = ingredientName;
+	public void setFoodName(String foodName) {
+		this.foodName = foodName;
 	}
 
 	

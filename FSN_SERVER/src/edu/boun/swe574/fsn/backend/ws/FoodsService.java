@@ -34,10 +34,12 @@ import edu.boun.swe574.fsn.backend.ws.util.TokenExpiredException;
 @SOAPBinding(style = Style.RPC, use=Use.LITERAL)
 public class FoodsService {
 
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public BaseServiceResponse createRecipe(	@WebParam(name="token")		String token, 
 												@WebParam(name="recipe")	RecipeInfo recipe){
+		
+		// TODO: Clean up the transaction logic, it looks very fragile
 		
 		BaseServiceResponse response = new BaseServiceResponse();
 		
@@ -60,6 +62,16 @@ public class FoodsService {
 		}
 		
 		try {
+			
+			List<IngredientInfo> ilist = recipe.getIngredientList();
+			
+			for (IngredientInfo ing : ilist){
+				Food ff = baseDao.find(Food.class, (long)ing.getFood().getFoodId());
+				if (ff == null){
+					throw new Exception("The food was not found in the database");
+				}
+			}
+			
 			Recipe r = new Recipe();
 			
 			r.setDate(new Date());
@@ -85,6 +97,8 @@ public class FoodsService {
 				}
 			}
 			
+			
+			
 		}
 		catch (Exception e){
 			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
@@ -98,7 +112,8 @@ public class FoodsService {
 	// STATUS: untested
 	@WebMethod
 	public GetIngredientsResponse getIngredients(	@WebParam(name="token")			String token, 
-								@WebParam(name="queryString")	String queryString){
+													@WebParam(name="queryString")	String queryString){
+		
 		GetIngredientsResponse response = new GetIngredientsResponse();
 		
 		if (token == null){
@@ -124,8 +139,8 @@ public class FoodsService {
 			
 			for (Food f : foodList){
 				FoodInfo fi = new FoodInfo();
-				fi.setIngredientId(f.getId());
-				fi.setIngredientName(f.getName());
+				fi.setFoodId(f.getId());
+				fi.setFoodName(f.getName());
 				fiList.add(fi);
 			}
 			
