@@ -5,10 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity(name = "Food")
 @Table(name = "Food")
+@NamedQueries({
+    @NamedQuery(name = "Food.findStartingWith", query = "SELECT f FROM Food f WHERE f.name LIKE :fname")
+})
 public class Food extends BaseModel {
 
 	private static final long serialVersionUID = 6353698582500250571L;

@@ -27,6 +27,7 @@ import edu.boun.swe574.fsn.backend.ws.response.info.IngredientInfo;
 import edu.boun.swe574.fsn.backend.ws.response.info.RecipeInfo;
 import edu.boun.swe574.fsn.backend.ws.response.info.RevisionInfo;
 import edu.boun.swe574.fsn.backend.ws.util.InvalidTokenException;
+import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
 import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
 import edu.boun.swe574.fsn.backend.ws.util.TokenExpiredException;
 
@@ -109,7 +110,14 @@ public class FoodsService {
 		return response;
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
+	@SuppressWarnings("unchecked")
+	/**
+	 * Could have well been "getFoods"! Gets the Food items in the database
+	 * @param token
+	 * @param queryString
+	 * @return
+	 */
 	@WebMethod
 	public GetIngredientsResponse getIngredients(	@WebParam(name="token")			String token, 
 													@WebParam(name="queryString")	String queryString){
@@ -134,7 +142,12 @@ public class FoodsService {
 		}
 		
 		try {
-			List<Food> foodList = baseDao.findByCriteria(Food.class, "name", queryString + "%");
+			if (queryString == null) {
+				queryString = "";
+			}
+			KeyValuePair<String, Object> kvpair = new KeyValuePair<String, Object>("fname", queryString + "%");
+			List<Food> foodList = baseDao.executeNamedQueryGetList("Food.findStartingWith", kvpair);
+			
 			List<FoodInfo> fiList = new ArrayList<FoodInfo>();
 			
 			for (Food f : foodList){
