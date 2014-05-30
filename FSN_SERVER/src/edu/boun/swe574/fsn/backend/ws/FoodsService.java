@@ -19,6 +19,7 @@ import edu.boun.swe574.fsn.backend.db.model.Recipe;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserRecipeRating;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
+import edu.boun.swe574.fsn.backend.ws.response.CreateNewVersionOfRecipeResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetIngredientsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRevisionHistoryOfRecipeResponse;
@@ -157,11 +158,11 @@ public class FoodsService {
 	
 	// STATUS: untested
 	@WebMethod
-	public BaseServiceResponse createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
+	public CreateNewVersionOfRecipeResponse createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
 											@WebParam(name="recipe")			RecipeInfo recipe, 
 											@WebParam(name="parentRecipeId")	long parentRecipeId,  
 											@WebParam(name="revisionNote")		String revisionNote){
-		BaseServiceResponse response = new BaseServiceResponse();
+		CreateNewVersionOfRecipeResponse response = new CreateNewVersionOfRecipeResponse();
 		
 		if (token == null || recipe == null || parentRecipeId == 0L || revisionNote == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
@@ -190,8 +191,11 @@ public class FoodsService {
 			r.setUser(user);
 			r.setVersionNote(revisionNote);
 			
-			//fix for Issue 51. Recipe must be saved first.
+			//fix for Issue 51. Recipe  must be saved first.
 			baseDao.save(r);
+			
+			//for Issue 53
+			response.setIdOfRecipeCreated(r.getId());
 			
 			List<IngredientInfo> inglist = recipe.getIngredientList();
 			
