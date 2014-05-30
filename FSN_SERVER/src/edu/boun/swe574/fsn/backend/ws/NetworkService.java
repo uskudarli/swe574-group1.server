@@ -353,13 +353,11 @@ public class NetworkService {
 	
 	// STATUS: untested
 	@WebMethod
-	public GetRecipeFeedsResponse getRecipeFeeds(	@WebParam(name="token")		String token, 
-								@WebParam(name="index")		Integer index, 
-								@WebParam(name="pageSize")	Integer pageSize){
+	public GetRecipeFeedsResponse getRecipeFeeds(	@WebParam(name="token")		String token){
 		
 		GetRecipeFeedsResponse response = new GetRecipeFeedsResponse();
 		
-		if (token == null || index == null || pageSize == null){
+		if (token == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -402,8 +400,7 @@ public class NetworkService {
 			
 			// set the index / pagesize
 			List<RecipeInfo> riList = new ArrayList<RecipeInfo>();
-			List<Recipe> subList = recipeList.subList(index, pageSize + index);
-			for (Recipe r : subList){
+			for (Recipe r : recipeList){
 				RecipeInfo ri = new RecipeInfo();
 				ri.mapRecipe(r);
 				
