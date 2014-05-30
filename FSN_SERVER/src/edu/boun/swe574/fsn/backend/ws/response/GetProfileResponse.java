@@ -50,7 +50,8 @@ public class GetProfileResponse extends BaseServiceResponse {
 	public void mapUserProfile(UserProfile up){
 		this.dateOfBirth = up.getDateOfBirth();
 		this.location = up.getLocation();
-		
+		this.name = up.getUser().getName();
+		this.surname = up.getUser().getSurname();
 		this.foodBlackList = null;
 		this.image = up.getImage();
 		this.profileMessage = up.getProfileMessage();
