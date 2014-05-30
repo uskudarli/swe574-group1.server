@@ -188,6 +188,10 @@ public class FoodsService {
 			r.setParentRecipe(baseDao.find(Recipe.class, parentRecipeId));
 			r.setTitle(recipe.getRecipeName());
 			r.setUser(user);
+			r.setVersionNote(revisionNote);
+			
+			//fix for Issue 51. Recipe must be saved first.
+			baseDao.save(r);
 			
 			List<IngredientInfo> inglist = recipe.getIngredientList();
 			
@@ -205,11 +209,11 @@ public class FoodsService {
 				}
 			}
 			
-			r.setVersionNote(revisionNote);
 			
-			baseDao.save(r);
+
 		}
 		catch (Exception e){
+			e.printStackTrace();
 			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
 			return response;
 		}
@@ -369,6 +373,7 @@ public class FoodsService {
 			response.setListOfRevisions(riList);
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
 			return response;
 		}
