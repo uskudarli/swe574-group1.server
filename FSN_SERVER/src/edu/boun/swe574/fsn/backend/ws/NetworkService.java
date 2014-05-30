@@ -383,8 +383,11 @@ public class NetworkService {
 			
 			// Extract and list the users from the link items
 			List<User> followedUsers = new ArrayList<User>();
+			
 			for (UserFollowLink link : followedList)
 				followedUsers.add(link.getFollowedUser());
+			// user's own recipes will also be 
+			followedUsers.add(user);
 			
 			// for all users, get the recipes which these users prepared
 			List<Recipe> recipeList = new ArrayList<Recipe>();
