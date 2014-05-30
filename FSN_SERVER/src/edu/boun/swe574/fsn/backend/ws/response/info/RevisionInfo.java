@@ -46,9 +46,11 @@ public class RevisionInfo {
 	public static RevisionInfo mapRecipe(Recipe r){
 		
 		RevisionInfo revInfo = new RevisionInfo();
-		
 		revInfo.setCurrentRecipeId(r.getId());
-		revInfo.setParentRecipeId(r.getParentRecipe().getId());
+		//fix for Issue 52
+		if(r.getParentRecipe() != null) {
+			revInfo.setParentRecipeId(r.getParentRecipe().getId());
+		}
 		revInfo.setRevisionDate(r.getDate());
 		revInfo.setRevisionNote(r.getVersionNote());
 		revInfo.setUser(UserInfo.mapUser(r.getUser()));
