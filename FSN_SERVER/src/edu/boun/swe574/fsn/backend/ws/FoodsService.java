@@ -254,8 +254,9 @@ public class FoodsService {
 		
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
+		User user;
 		try {
-			ServiceCommons.authenticate(token, response);
+			user = ServiceCommons.authenticate(token, response);
 		} catch (InvalidTokenException e) {
 			response.fail(ServiceErrorCode.TOKEN_INVALID);
 			return response;
@@ -290,6 +291,16 @@ public class FoodsService {
 			
 			//TODO: What happens in the typecast here??
 			ri.setRating((int)avg);
+			
+			
+			// retrieve own rating of the customer if exists
+			List<UserRecipeRating> rates = baseDao.findByCriteria(UserRecipeRating.class, 
+															new String[]{"recipe", "user"},
+															new Object[]{r, user});
+			
+			if (!rates.isEmpty()){
+				ri.setOwnRating(rates.get(0).getRating());
+			}
 			
 			response.setRecipe(ri);
 		}

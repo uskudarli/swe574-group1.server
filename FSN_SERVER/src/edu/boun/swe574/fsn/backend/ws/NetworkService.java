@@ -23,6 +23,7 @@ import edu.boun.swe574.fsn.backend.db.model.Recipe;
 import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserFollowLink;
 import edu.boun.swe574.fsn.backend.db.model.UserProfile;
+import edu.boun.swe574.fsn.backend.db.model.UserRecipeRating;
 import edu.boun.swe574.fsn.backend.ws.response.info.FoodInfo;
 import edu.boun.swe574.fsn.backend.ws.request.info.FoodList;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
@@ -416,6 +417,26 @@ public class NetworkService {
 				ri.mapRecipe(r);
 				
 				List<Ingredient> ingList = baseDao.findByCriteria(Ingredient.class, "recipe", r);
+				
+				List<UserRecipeRating> rateList = baseDao.findByCriteria(UserRecipeRating.class, "recipe", r);
+				double avg = 0;
+				for (UserRecipeRating rate : rateList){
+					avg += (double)rate.getRating();
+				}
+				avg /= rateList.size();
+				
+				//TODO: What happens in the typecast here??
+				ri.setRating((int)avg);
+				
+				
+				// retrieve own rating of the customer if exists
+				List<UserRecipeRating> rates = baseDao.findByCriteria(UserRecipeRating.class, 
+																new String[]{"recipe", "user"},
+																new Object[]{r, user});
+				
+				if (!rates.isEmpty()){
+					ri.setOwnRating(rates.get(0).getRating());
+				}
 				
 				ri.mapIngredientList(ingList);
 				riList.add(ri);
