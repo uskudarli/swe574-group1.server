@@ -82,6 +82,8 @@ public class NetworkService {
 			for(FoodBlacklist bl : bllist){
 				FoodInfo fi = new FoodInfo();
 				fi.setFoodId(bl.getFood().getId());
+				fi.setFoodName(bl.getFood().getName());
+				fi.setCategoryName(bl.getFood().getParent().getName());
 				returnBlacklist.add(fi);
 			}
 			
@@ -243,6 +245,8 @@ public class NetworkService {
 			for(FoodBlacklist bl : bllist){
 				FoodInfo fi = new FoodInfo();
 				fi.setFoodId(bl.getFood().getId());
+				fi.setFoodName(bl.getFood().getName());
+				fi.setCategoryName(bl.getFood().getParent().getName());
 				returnBlacklist.add(fi);
 			}
 			

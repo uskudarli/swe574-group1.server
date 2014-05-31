@@ -56,5 +56,13 @@ public class Food extends BaseModel {
 	public void setIsUsable(Boolean isUsable) {
 		this.isUsable = isUsable;
 	}
+
+	public Food getParent() {
+		return parent;
+	}
+
+	public void setParent(Food parent) {
+		this.parent = parent;
+	}
 	
 }

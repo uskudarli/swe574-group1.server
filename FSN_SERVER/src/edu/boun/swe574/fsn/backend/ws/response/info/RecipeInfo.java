@@ -89,6 +89,7 @@ public class RecipeInfo {
 			//TODO: does not set the name!!
 			fi.setFoodId(i.getFood().getId());
 			fi.setFoodName(i.getFood().getName());
+			fi.setCategoryName(i.getFood().getParent().getName());
 			info.setFood(fi);
 			info.setUnit(i.getUnit());
 			

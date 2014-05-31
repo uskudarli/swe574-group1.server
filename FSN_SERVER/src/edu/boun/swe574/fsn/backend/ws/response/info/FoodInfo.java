@@ -4,6 +4,7 @@ public class FoodInfo {
 	
 	private long foodId;
 	private String foodName;
+	private String categoryName;
 	
 	public long getFoodId() {
 		return this.foodId;
@@ -16,6 +17,12 @@ public class FoodInfo {
 	}
 	public void setFoodName(String foodName) {
 		this.foodName = foodName;
+	}
+	public String getCategoryName() {
+		return categoryName;
+	}
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 
 	
