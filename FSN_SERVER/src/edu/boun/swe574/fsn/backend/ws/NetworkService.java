@@ -348,10 +348,12 @@ public class NetworkService {
 		
 		for (UserFollowLink link : linkList){
 			UserInfo ui = new UserInfo();
+			UserProfile up = ServiceCommons.getProfile(link.getFollowedUser());
 			ui.setName(link.getFollowedUser().getName());
 			ui.setSurname(link.getFollowedUser().getSurname());
 			ui.setEmail(link.getFollowedUser().getEmail());
 			ui.setUserId(link.getFollowedUser().getId());
+			ui.setProfileMessage(up.getProfileMessage());
 			userList.add(ui);
 		}
 			
