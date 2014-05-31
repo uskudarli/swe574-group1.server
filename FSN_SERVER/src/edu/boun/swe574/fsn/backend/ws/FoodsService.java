@@ -170,15 +170,15 @@ public class FoodsService {
 		return response;
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public CreateNewVersionOfRecipeResponse createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
 											@WebParam(name="recipe")			RecipeInfo recipe, 
-											@WebParam(name="parentRecipeId")	long parentRecipeId,  
+											@WebParam(name="parentRecipeId")	Long parentRecipeId,  
 											@WebParam(name="revisionNote")		String revisionNote){
 		CreateNewVersionOfRecipeResponse response = new CreateNewVersionOfRecipeResponse();
 		
-		if (token == null || recipe == null || parentRecipeId == 0L || revisionNote == null){
+		if (token == null || recipe == null || parentRecipeId == null || revisionNote == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
