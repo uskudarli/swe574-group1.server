@@ -155,7 +155,9 @@ public class FoodsService {
 				FoodInfo fi = new FoodInfo();
 				fi.setFoodId(f.getId());
 				fi.setFoodName(f.getName());
-				fi.setCategoryName(f.getParent().getName());
+				if(f.getParent() != null){
+					fi.setCategoryName(f.getParent().getName());
+				}
 				fiList.add(fi);
 			}
 			
