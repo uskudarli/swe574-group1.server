@@ -247,7 +247,6 @@ public class FoodsService {
 		
 		GetRecipeResponse response = new GetRecipeResponse();
 		
-		// TODO: test the 0L logic
 		if (token == null || recipeId == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;

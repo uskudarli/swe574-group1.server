@@ -17,6 +17,7 @@ public class RecipeInfo {
 	private Date createDate;
 	private String directions;
 	private List<IngredientInfo> ingredientList;
+	private int ownRating;
 	
 	public long getRecipeId() {
 		return recipeId;
@@ -86,7 +87,6 @@ public class RecipeInfo {
 			info.setAmount(i.getAmount());
 			FoodInfo fi = new FoodInfo();
 			
-			//TODO: does not set the name!!
 			fi.setFoodId(i.getFood().getId());
 			fi.setFoodName(i.getFood().getName());
 			fi.setCategoryName(i.getFood().getParent().getName());
@@ -96,5 +96,11 @@ public class RecipeInfo {
 			iilist.add(info);
 		}
 		this.setIngredientList(iilist);
+	}
+	public int getOwnRating() {
+		return ownRating;
+	}
+	public void setOwnRating(int ownRating) {
+		this.ownRating = ownRating;
 	}
 }

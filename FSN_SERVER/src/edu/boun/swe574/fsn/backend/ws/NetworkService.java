@@ -213,8 +213,9 @@ public class NetworkService {
 		
 		BaseDao baseDao = DaoFactory.getInstance().getBaseDao();
 		
+		User user;
 		try {
-			ServiceCommons.authenticate(token, response);
+			user = ServiceCommons.authenticate(token, response);
 		} catch (InvalidTokenException e) {
 			response.fail(ServiceErrorCode.TOKEN_INVALID);
 			return response;
@@ -253,6 +254,9 @@ public class NetworkService {
 			response.setIngredientBlackList(returnBlacklist);
 			response.setName(targetUser.getName());
 			response.setSurname(targetUser.getSurname());
+			
+			List<UserFollowLink> link = baseDao.findByCriteria(UserFollowLink.class, new String[]{"followingUser", "followedUser"}, new Object[]{user, targetUser});
+			response.setFollowed(!link.isEmpty());
 		}
 		catch (Exception e){
 			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);

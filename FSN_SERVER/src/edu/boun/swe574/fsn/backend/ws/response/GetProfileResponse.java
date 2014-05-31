@@ -15,6 +15,7 @@ public class GetProfileResponse extends BaseServiceResponse {
 	private String profileMessage;
 	private byte[] image;
 	private List<FoodInfo> foodBlackList;
+	private boolean isFollowed;
 	
 	public String getLocation() {
 		return location;
@@ -67,6 +68,12 @@ public class GetProfileResponse extends BaseServiceResponse {
 	}
 	public void setSurname(String surname) {
 		this.surname = surname;
+	}
+	public boolean isFollowed() {
+		return isFollowed;
+	}
+	public void setFollowed(boolean isFollowed) {
+		this.isFollowed = isFollowed;
 	}
 
 	
