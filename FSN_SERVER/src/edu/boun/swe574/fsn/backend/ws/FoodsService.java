@@ -303,14 +303,14 @@ public class FoodsService {
 		return response;
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public BaseServiceResponse rateRecipe(	@WebParam(name="token")		String token, 
-							@WebParam(name="recipeId")	long recipeId, 
+							@WebParam(name="recipeId")	Long recipeId, 
 							@WebParam(name="rateValue")	Integer rateValue){
 		BaseServiceResponse response = new BaseServiceResponse();
 		
-		if (token == null || recipeId == 0L || rateValue == null){
+		if (token == null || recipeId == null || rateValue == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -340,20 +340,34 @@ public class FoodsService {
 				return response;
 			}
 			
-			UserRecipeRating rate = new UserRecipeRating();
+			//TODO: Update if the user already has a rating
+			List<UserRecipeRating> ratelist = baseDao.findByCriteria(UserRecipeRating.class, new String[]{"recipe", "user"}, new Object[]{r, user});
 			
-			rate.setUser(user);
-			rate.setRating(rateValue);
-			rate.setRecipe(r);
+			if (ratelist.isEmpty()){
+				// User has no rating before
+				UserRecipeRating rate = new UserRecipeRating();
+				rate.setUser(user);
+				rate.setRating(rateValue);
+				rate.setRecipe(r);
+				
+				baseDao.save(rate);
+			}
+			else {
+				// User has a rating from before
+				UserRecipeRating rate = ratelist.get(0);
+				rate.setRating(rateValue);
+				
+				baseDao.save(rate);
+			}			
 			
-			baseDao.save(rate);
 		}
 		catch(Exception e){
 			response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
 			return response;
 		}
 		
-		return new BaseServiceResponse();
+		response.succeed();
+		return response;
 	}
 	
 	// STATUS: OK
