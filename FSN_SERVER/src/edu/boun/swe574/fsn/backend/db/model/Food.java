@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Entity(name = "Food")
 @Table(name = "Food")
 @NamedQueries({
-    @NamedQuery(name = "Food.findStartingWith", query = "SELECT f FROM Food f WHERE f.name LIKE :fname")
+    @NamedQuery(name = "Food.findStartingWith", query = "SELECT f FROM Food f WHERE f.name LIKE :fname AND f.isUsable = true")
 })
 public class Food extends BaseModel {
 

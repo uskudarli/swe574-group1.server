@@ -240,15 +240,15 @@ public class FoodsService {
 		return response;
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public GetRecipeResponse getRecipe(	@WebParam(name="token")		String token, 
-							@WebParam(name="recipeId")	long recipeId){
+							@WebParam(name="recipeId")	Long recipeId){
 		
 		GetRecipeResponse response = new GetRecipeResponse();
 		
 		// TODO: test the 0L logic
-		if (token == null || recipeId == 0L){
+		if (token == null || recipeId == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -268,10 +268,13 @@ public class FoodsService {
 		try {
 			
 			Recipe r = baseDao.find(Recipe.class, recipeId);
+			if (r == null){
+				response.fail(ServiceErrorCode.RECIPE_NOT_FOUND);
+				return response;
+			}
 			RecipeInfo ri = new RecipeInfo();
 			
 			ri.mapRecipe(r);
-			//TODO: also get the ingredient list + rating
 			
 			//TODO: debug&test the query logic!
 			List<Ingredient> inglist = baseDao.findByCriteria(Ingredient.class, "recipe", r);
@@ -353,14 +356,14 @@ public class FoodsService {
 		return new BaseServiceResponse();
 	}
 	
-	// STATUS: untested
+	// STATUS: OK
 	@WebMethod
 	public GetRevisionHistoryOfRecipeResponse getRevisionHistoryOfRecipe(	@WebParam(name="token")		String token, 
-											@WebParam(name="recipeId")	long recipeId){
+											@WebParam(name="recipeId")	Long recipeId){
 		
 		GetRevisionHistoryOfRecipeResponse response = new GetRevisionHistoryOfRecipeResponse();
 		
-		if (token == null || recipeId == 0L){
+		if (token == null || recipeId == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
 			return response;
 		}
@@ -381,6 +384,10 @@ public class FoodsService {
 			List<RevisionInfo> riList = new ArrayList<RevisionInfo>();
 			
 			Recipe root = baseDao.find(Recipe.class, recipeId);
+			if (root == null){
+				response.fail(ServiceErrorCode.RECIPE_NOT_FOUND);
+				return response;
+			}
 			riList.add(RevisionInfo.mapRecipe(root));
 			
 			while (root.getParentRecipe() != null){
