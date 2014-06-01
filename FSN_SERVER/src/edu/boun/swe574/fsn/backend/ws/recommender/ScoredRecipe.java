@@ -27,7 +27,7 @@ public class ScoredRecipe implements Comparable<ScoredRecipe>{
 	
 	@Override
 	public int compareTo(ScoredRecipe o) {
-		return o.getScore() >= this.getScore() ? -1 : 1;
+		return o.getScore() >= this.getScore() ? 1 : -1;
 	}
 	
 	
