@@ -20,6 +20,7 @@ import edu.boun.swe574.fsn.backend.db.model.User;
 import edu.boun.swe574.fsn.backend.db.model.UserRecipeRating;
 import edu.boun.swe574.fsn.backend.ws.response.BaseServiceResponse;
 import edu.boun.swe574.fsn.backend.ws.response.CreateNewVersionOfRecipeResponse;
+import edu.boun.swe574.fsn.backend.ws.response.CreateRecipeResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetIngredientsResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRecipeResponse;
 import edu.boun.swe574.fsn.backend.ws.response.GetRevisionHistoryOfRecipeResponse;
@@ -38,12 +39,12 @@ public class FoodsService {
 
 	// STATUS: OK
 	@WebMethod
-	public BaseServiceResponse createRecipe(	@WebParam(name="token")		String token, 
+	public CreateRecipeResponse createRecipe(	@WebParam(name="token")		String token, 
 												@WebParam(name="recipe")	RecipeInfo recipe){
 		
 		// TODO: Clean up the transaction logic, it looks very fragile
 		
-		BaseServiceResponse response = new BaseServiceResponse();
+		CreateRecipeResponse response = new CreateRecipeResponse();
 		
 		if (token == null || recipe == null){
 			response.fail(ServiceErrorCode.MISSING_PARAM);
@@ -99,7 +100,7 @@ public class FoodsService {
 				}
 			}
 			
-			
+			response.setCreatedRecipeId(r.getId());
 			
 		}
 		catch (Exception e){
