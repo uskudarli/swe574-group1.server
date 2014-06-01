@@ -13,6 +13,9 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
+import javax.persistence.RollbackException;
+
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 import edu.boun.swe574.fsn.backend.db.dao.BaseDao;
 import edu.boun.swe574.fsn.backend.db.dao.DaoFactory;
@@ -34,6 +37,7 @@ import edu.boun.swe574.fsn.backend.ws.response.info.RecipeInfo;
 import edu.boun.swe574.fsn.backend.ws.response.info.UserInfo;
 import edu.boun.swe574.fsn.backend.ws.util.InvalidTokenException;
 import edu.boun.swe574.fsn.backend.ws.util.KeyValuePair;
+import edu.boun.swe574.fsn.backend.ws.util.ResultCode;
 import edu.boun.swe574.fsn.backend.ws.util.ServiceErrorCode;
 import edu.boun.swe574.fsn.backend.ws.util.TokenExpiredException;
 
@@ -544,10 +548,19 @@ public class NetworkService {
 				if(f != null){
 					baseDao.save(blitem);
 				}
-			} catch(Exception e){
-				// an integrity error could occur (?) if there is a unique constraint
-				// on the DB and the service caller tries to add a Food-UserProfile link
-				// that already was in the table
+			} 
+			catch(RollbackException rbe){
+                if(rbe.getCause().getClass() == DatabaseException.class){
+                        DatabaseException dbe = (DatabaseException)rbe.getCause();
+                        // MySQL Err#1062 - "duplicate entry for key" error handled
+                        if (dbe.getDatabaseErrorCode() != 1062) {
+                           response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
+                           return response;
+                        }
+                };
+                response.setResultCode(ResultCode.FAILURE.getCode());
+			}
+			catch(Exception e){
 				response.fail(ServiceErrorCode.INTERNAL_SERVER_ERROR);
 				return response;
 			}

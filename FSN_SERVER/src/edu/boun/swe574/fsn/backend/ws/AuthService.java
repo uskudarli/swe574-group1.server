@@ -85,7 +85,6 @@ public class AuthService {
                         if (dbe.getDatabaseErrorCode() == 1062) {
                                 response.setErrorCode(ServiceErrorCode.EMAIL_IN_USE.getCode());
                         }
-
                         // unhandled type of database exception
                         else {
                                 response.setErrorCode(ServiceErrorCode.INTERNAL_SERVER_ERROR.getCode());

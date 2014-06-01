@@ -10,6 +10,7 @@ package edu.boun.swe574.fsn.backend.ws.util;
 	107	User not found
 	108	Recipe not found
 	109	Rate value is out of the range
+	110 Food already blacklisted by user
 	500	Internal server error
 */
 public enum ServiceErrorCode {
@@ -24,6 +25,7 @@ public enum ServiceErrorCode {
 	USER_NOT_FOUND			(107),
 	RECIPE_NOT_FOUND		(108),
 	RATE_VALUE_INVALID		(109),
+	ALREADY_BLACKLISTED 	(110),
 	INTERNAL_SERVER_ERROR 	(500)
 	;
 	

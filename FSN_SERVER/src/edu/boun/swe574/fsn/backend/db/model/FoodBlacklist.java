@@ -6,10 +6,12 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 
 @Entity(name = "FoodBlacklist")
-@Table(name = "FoodBlacklist")
+@Table(name = "FoodBlacklist",
+	   uniqueConstraints=@UniqueConstraint(columnNames={"FOOD_ID", "USER_PROFILE_ID"}))
 public class FoodBlacklist extends BaseModel {
 
 	private static final long serialVersionUID = 7123412412500250571L;
