@@ -89,7 +89,9 @@ public class RecipeInfo {
 			
 			fi.setFoodId(i.getFood().getId());
 			fi.setFoodName(i.getFood().getName());
-			fi.setCategoryName(i.getFood().getParent().getName());
+			if (i.getFood().getParent() != null){
+				fi.setCategoryName(i.getFood().getParent().getName());
+			}
 			info.setFood(fi);
 			info.setUnit(i.getUnit());
 			
