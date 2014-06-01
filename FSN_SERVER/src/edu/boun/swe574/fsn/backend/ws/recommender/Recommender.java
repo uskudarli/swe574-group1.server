@@ -2,7 +2,8 @@ package edu.boun.swe574.fsn.backend.ws.recommender;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class Recommender {
 		// Retrieve a list of all the recipes
 		List<Recipe> recipes = baseDao.findAll(Recipe.class);
 		
-		Map<Recipe, Double> finalScores = new HashMap<Recipe, Double>();
+		ArrayList<ScoredRecipe> scoredRecipes = new ArrayList<ScoredRecipe>();
 		
 		// for each recipe, push out a weighting on the criteria
 		for (Recipe r : recipes){
@@ -84,12 +85,19 @@ public class Recommender {
 			double rate = ratingsMatrix.get(r);
 			
 			double score = weights[0]*(double)foodsMatched - weights[1]*(double)blacklistMatched + weights[2]*rate;
-			finalScores.put(r, score);
+			
+			scoredRecipes.add(new ScoredRecipe(r, score));
 			
 		}
 		
-		//TODO: Sort the map on scores and output the list
-		return new ArrayList<Recipe>();
+		Collections.sort(scoredRecipes);
+		
+		List<Recipe> finalRecipes = new ArrayList<Recipe>();
+		for (ScoredRecipe sr: scoredRecipes){
+			finalRecipes.add(sr.getRecipe());
+		}
+		
+		return finalRecipes;
 	}
 	
 	private static Map<Recipe, List<Long>> getRecipeMatrix(){
@@ -150,5 +158,4 @@ public class Recommender {
 		
 		return cachedRatingsMatrix;
 	}
-	
 }
