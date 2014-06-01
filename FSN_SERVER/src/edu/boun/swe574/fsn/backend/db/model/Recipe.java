@@ -25,7 +25,7 @@ public class Recipe extends BaseModel implements Comparable<Recipe> {
 	private String directions;
 	
 	@Column(name="DATE")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
 	@Column(name="VERSION_NOTE", length=200)
