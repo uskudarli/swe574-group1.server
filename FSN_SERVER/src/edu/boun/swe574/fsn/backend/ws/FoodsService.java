@@ -173,7 +173,7 @@ public class FoodsService {
 		return response;
 	}
 	
-	// STATUS: OK
+	// STATushUS: OK
 	@WebMethod
 	public CreateNewVersionOfRecipeResponse createNewVersionOfRecipe(	@WebParam(name="token")				String token, 
 											@WebParam(name="recipe")			RecipeInfo recipe, 

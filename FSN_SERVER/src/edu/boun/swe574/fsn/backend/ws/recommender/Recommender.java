@@ -153,7 +153,6 @@ public class Recommender {
 			}
 			cachedRatingsMatrix = ratingsMap;
 			ratingsCacheTime = Calendar.getInstance();
-			
 		}
 		
 		return cachedRatingsMatrix;
