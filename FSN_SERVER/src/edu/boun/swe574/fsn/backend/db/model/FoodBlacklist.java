@@ -1,6 +1,7 @@
 package edu.boun.swe574.fsn.backend.db.model;
 
 //import javax.persistence.Column;
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -12,6 +13,7 @@ import javax.persistence.UniqueConstraint;
 @Entity(name = "FoodBlacklist")
 @Table(name = "FoodBlacklist",
 	   uniqueConstraints=@UniqueConstraint(columnNames={"FOOD_ID", "USER_PROFILE_ID"}))
+@Cacheable(false)
 public class FoodBlacklist extends BaseModel {
 
 	private static final long serialVersionUID = 7123412412500250571L;

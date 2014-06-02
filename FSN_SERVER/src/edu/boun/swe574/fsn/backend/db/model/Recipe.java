@@ -2,6 +2,7 @@ package edu.boun.swe574.fsn.backend.db.model;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,7 @@ import javax.persistence.TemporalType;
 
 @Entity(name = "Recipe")
 @Table(name = "Recipe")
+@Cacheable(false)
 public class Recipe extends BaseModel implements Comparable<Recipe> {
 
 	private static final long serialVersionUID = 9012412931235002571L;

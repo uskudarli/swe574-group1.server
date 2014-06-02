@@ -1,5 +1,6 @@
 package edu.boun.swe574.fsn.backend.db.model;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +10,7 @@ import javax.persistence.Table;
 
 @Entity(name = "Ingredient")
 @Table(name = "Ingredient")
+@Cacheable(false)
 public class Ingredient extends BaseModel {
 
 	private static final long serialVersionUID = 635123582500250571L;

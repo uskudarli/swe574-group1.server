@@ -2,6 +2,7 @@ package edu.boun.swe574.fsn.backend.db.model;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +20,7 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "UserProfile.getUserProfile", query = "SELECT up FROM UserProfile up WHERE up.user.id = :uid")
 })
+@Cacheable(false)
 public class UserProfile extends BaseModel{
 	
 	private static final long serialVersionUID = 6123123500250571L;

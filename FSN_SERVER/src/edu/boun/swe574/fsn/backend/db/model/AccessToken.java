@@ -2,6 +2,7 @@ package edu.boun.swe574.fsn.backend.db.model;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +20,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "AccessToken.getUserTokens", query = "SELECT at FROM AccessToken at WHERE at.user.id = :uid"),
     @NamedQuery(name = "AccessToken.getTokenByHash" , query = "SELECT at FROM AccessToken at WHERE at.md5Token = :token" )
 })
+@Cacheable(false)
 public class AccessToken extends BaseModel {
 
 	private static final long serialVersionUID = 58917120000571L;

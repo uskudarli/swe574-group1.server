@@ -2,6 +2,7 @@ package edu.boun.swe574.fsn.backend.db.model;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -19,6 +20,7 @@ import javax.persistence.UniqueConstraint;
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByName" , query = "SELECT u FROM User u WHERE u.name LIKE :name OR u.surname LIKE :name")
 })
+@Cacheable(false)
 public class User extends BaseModel {
 	
 	private static final long serialVersionUID = 7112342412500250571L;

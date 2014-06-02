@@ -1,5 +1,6 @@
 package edu.boun.swe574.fsn.backend.db.model;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "Food.findStartingWith", query = "SELECT f FROM Food f WHERE f.name LIKE :fname AND f.isUsable = true")
 })
+@Cacheable(false)
 public class Food extends BaseModel {
 
 	private static final long serialVersionUID = 6353698582500250571L;
