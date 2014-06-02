@@ -3,7 +3,6 @@ package edu.boun.swe574.fsn.backend.ws.recommender;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,7 @@ public class Recommender {
 	
 	// configuration parameters for the cache behavior and recommender
 	private static final long cacheTimeout = 300000;
-	private static final boolean cacheEnabled = true;
+	private static final boolean cacheEnabled = false;
 	private static final Double[] weights = new Double[]{1.0, 2.0, 3.0};
 	
 	// last cache times
